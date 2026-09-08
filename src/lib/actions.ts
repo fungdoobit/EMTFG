@@ -3,9 +3,12 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
+  checkFeedbackPasscode,
   checkPasscode,
+  clearFeedbackUnlockedCookie,
   clearUnlockedCookie,
   requireUnlocked,
+  setFeedbackUnlockedCookie,
   setUnlockedCookie,
 } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -62,6 +65,22 @@ export async function unlock(_prevState: ActionState, formData: FormData): Promi
 export async function lock(): Promise<void> {
   await clearUnlockedCookie();
   revalidatePath("/", "layout");
+}
+
+export async function unlockFeedback(
+  _prevState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  const passcode = String(formData.get("passcode") ?? "");
+  if (!passcode) return { error: "Enter the passcode." };
+  if (!checkFeedbackPasscode(passcode)) return { error: "That passcode isn't right." };
+  await setFeedbackUnlockedCookie();
+  return null;
+}
+
+export async function lockFeedback(): Promise<void> {
+  await clearFeedbackUnlockedCookie();
+  revalidatePath("/feedback");
 }
 
 // ── Shared helpers ────────────────────────────────────────────────────

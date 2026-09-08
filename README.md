@@ -30,7 +30,9 @@ anyone with the link; adding/editing/deleting is behind one shared passcode.
   itself. Every mutating Server Action calls `requireUnlocked()` at the top —
   hiding the "Add process" button from someone who hasn't entered the
   passcode is a UX nicety, not the actual security boundary; the check inside
-  the action is.
+  the action is. `/feedback` uses the exact same mechanism but with its own
+  independent secret (`FEEDBACK_PASSCODE`) and cookie, so the two passcodes
+  don't unlock each other.
 
 ## Database schema
 
@@ -101,9 +103,11 @@ In the Supabase dashboard: **Project Settings → API**.
 cp .env.local.example .env.local
 ```
 
-Fill in the three Supabase values above, plus `APP_PASSCODE` — anything you
-like; it's the shared passcode your team will type in to add/edit/delete
-content.
+Fill in the three Supabase values above, plus:
+- `APP_PASSCODE` — the shared passcode your team types in to add/edit/delete content.
+- `FEEDBACK_PASSCODE` — a *different* passcode for viewing `/feedback`. Keep
+  this one to yourself — anyone who knows `APP_PASSCODE` can edit content,
+  but shouldn't automatically be able to read what people said in feedback.
 
 ### 6. Run it
 
@@ -129,17 +133,17 @@ Finance department with T12W and PHE underneath it, fully populated.
 
 1. Push this repository to GitHub (if it isn't already).
 2. Go to [vercel.com/new](https://vercel.com/new) and import the repo.
-3. In the project's **Environment Variables** settings, add the same four
+3. In the project's **Environment Variables** settings, add the same five
    variables from your `.env.local`: `NEXT_PUBLIC_SUPABASE_URL`,
    `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`,
-   `APP_PASSCODE`.
+   `APP_PASSCODE`, `FEEDBACK_PASSCODE`.
 4. Deploy. Every push to your main branch redeploys automatically.
 
 `NEXT_PUBLIC_`-prefixed variables are safe to ship to the browser by design —
-that's what the prefix means in Next.js. `SUPABASE_SERVICE_ROLE_KEY` and
-`APP_PASSCODE` are not prefixed, so Next.js never bundles them into
-client-side JavaScript; they only exist inside Server Actions running on
-Vercel's servers.
+that's what the prefix means in Next.js. `SUPABASE_SERVICE_ROLE_KEY`,
+`APP_PASSCODE`, and `FEEDBACK_PASSCODE` are not prefixed, so Next.js never
+bundles them into client-side JavaScript; they only exist inside Server
+Actions running on Vercel's servers.
 
 ## Adding another department later
 

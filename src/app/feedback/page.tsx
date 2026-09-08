@@ -1,6 +1,7 @@
 import { getFeedbackList } from "@/lib/queries";
-import { isUnlocked } from "@/lib/auth";
-import { LockedNotice } from "@/components/LockedNotice";
+import { isFeedbackUnlocked } from "@/lib/auth";
+import { lockFeedback } from "@/lib/actions";
+import { FeedbackUnlockForm } from "@/components/FeedbackUnlockForm";
 
 function formatDateTime(iso: string) {
   return new Date(iso).toLocaleString(undefined, {
@@ -13,22 +14,30 @@ function formatDateTime(iso: string) {
 }
 
 export default async function FeedbackPage() {
-  const unlocked = await isUnlocked();
+  const unlocked = await isFeedbackUnlocked();
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight text-foreground">Feedback</h1>
-        <p className="mt-1 text-sm text-muted">
-          Everything submitted through the &ldquo;Feedback&rdquo; box in the side menu.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Feedback</h1>
+          <p className="mt-1 text-sm text-muted">
+            Everything submitted through the &ldquo;Feedback&rdquo; box in the side menu.
+          </p>
+        </div>
+        {unlocked && (
+          <form action={lockFeedback}>
+            <button
+              type="submit"
+              className="whitespace-nowrap rounded-md border border-border px-3 py-1.5 text-sm text-muted transition-all hover:border-foreground/30 hover:text-foreground active:scale-95"
+            >
+              Lock feedback view
+            </button>
+          </form>
+        )}
       </div>
 
-      {!unlocked ? (
-        <LockedNotice />
-      ) : (
-        <FeedbackList />
-      )}
+      {!unlocked ? <FeedbackUnlockForm /> : <FeedbackList />}
     </div>
   );
 }

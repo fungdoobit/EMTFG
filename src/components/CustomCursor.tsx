@@ -2,16 +2,20 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** A precise dot at the exact pointer position, trailed by a soft circle
- * driven by real spring physics (velocity + stiffness + damping, not a flat
- * lerp) — it overshoots slightly and settles, and stretches into an ellipse
- * along the direction of motion when moving fast, snapping back to a circle
- * at rest. Desktop only (pointer: fine) and fully skipped under
+/** The exact pointer position is a fixed pivot; a short tail is anchored
+ * there and swings to point back along the direction of recent movement,
+ * lagging with rotational inertia (shortest-path angle lerp, so it never
+ * spins the long way around) and growing longer the faster the pointer
+ * moves, retracting toward nothing at rest. No dot-and-ring pair — this is
+ * one small pivot mark plus one tail.
+ *
+ * Desktop only (pointer: fine) and fully skipped under
  * prefers-reduced-motion. Text inputs keep the normal cursor (see
- * .custom-cursor-active in globals.css) so the app's forms stay usable. */
+ * .custom-cursor-active in globals.css) so the app's many forms stay
+ * usable. */
 export function CustomCursor() {
-  const dotRef = useRef<HTMLDivElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
+  const pivotRef = useRef<HTMLDivElement>(null);
+  const tailRef = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
   const [hovering, setHovering] = useState(false);
 
@@ -28,19 +32,16 @@ export function CustomCursor() {
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    let posX = mouseX;
-    let posY = mouseY;
-    let velX = 0;
-    let velY = 0;
-
-    const STIFFNESS = 0.14;
-    const DAMPING = 0.72;
+    let prevX = mouseX;
+    let prevY = mouseY;
+    let smoothAngle = 0;
+    let smoothLength = 0;
 
     function onMove(e: MouseEvent) {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+      if (pivotRef.current) {
+        pivotRef.current.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
       }
       const target = e.target as HTMLElement | null;
       setHovering(!!target?.closest("a, button, select, [role='button']"));
@@ -48,19 +49,26 @@ export function CustomCursor() {
 
     let raf = 0;
     function tick() {
-      const ax = (mouseX - posX) * STIFFNESS;
-      const ay = (mouseY - posY) * STIFFNESS;
-      velX = (velX + ax) * DAMPING;
-      velY = (velY + ay) * DAMPING;
-      posX += velX;
-      posY += velY;
+      const dx = mouseX - prevX;
+      const dy = mouseY - prevY;
+      prevX = mouseX;
+      prevY = mouseY;
 
-      const speed = Math.min(Math.hypot(velX, velY), 40);
-      const stretch = 1 + speed * 0.02;
-      const angle = speed > 0.5 ? Math.atan2(velY, velX) * (180 / Math.PI) : 0;
+      const speed = Math.hypot(dx, dy);
 
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%) rotate(${angle}deg) scaleX(${stretch})`;
+      if (speed > 0.3) {
+        const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI);
+        let delta = targetAngle - smoothAngle;
+        delta = ((delta + 180) % 360 + 360) % 360 - 180;
+        smoothAngle += delta * 0.22;
+      }
+
+      const targetLength = Math.min(speed * 2.4, 54);
+      smoothLength += (targetLength - smoothLength) * 0.15;
+
+      if (tailRef.current) {
+        tailRef.current.style.width = `${smoothLength}px`;
+        tailRef.current.style.transform = `translate(${mouseX}px, ${mouseY}px) translateY(-50%) rotate(${smoothAngle}deg)`;
       }
       raf = requestAnimationFrame(tick);
     }
@@ -79,15 +87,13 @@ export function CustomCursor() {
   return (
     <>
       <div
-        ref={dotRef}
-        className="pointer-events-none fixed left-0 top-0 z-[100] h-1.5 w-1.5 rounded-full bg-brand"
+        ref={tailRef}
+        className="pointer-events-none fixed left-0 top-0 z-[100] h-[2px] origin-left rounded-full bg-gradient-to-r from-brand/70 to-transparent"
       />
       <div
-        ref={ringRef}
-        className={`pointer-events-none fixed left-0 top-0 z-[100] rounded-full border transition-[width,height,background-color,border-color] duration-300 ${
-          hovering
-            ? "h-12 w-12 border-brand/60 bg-brand/10"
-            : "h-8 w-8 border-brand/30 bg-brand/[0.04]"
+        ref={pivotRef}
+        className={`pointer-events-none fixed left-0 top-0 z-[100] rounded-full bg-brand transition-[width,height] duration-200 ${
+          hovering ? "h-3 w-3" : "h-1.5 w-1.5"
         }`}
       />
     </>

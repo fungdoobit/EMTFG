@@ -6,6 +6,14 @@ import { useActionState, useEffect, useState } from "react";
 import { submitFeedback } from "@/lib/actions";
 import type { Department } from "@/lib/types";
 
+const PANEL_BACKGROUND = {
+  backgroundImage: [
+    "radial-gradient(120% 100% at 15% 0%, color-mix(in oklab, var(--brand) 22%, var(--surface)), transparent 60%)",
+    "radial-gradient(120% 100% at 100% 100%, color-mix(in oklab, var(--accent) 18%, var(--surface)), transparent 60%)",
+  ].join(", "),
+  backgroundColor: "var(--surface)",
+};
+
 export function SideNav({ departments }: { departments: Department[] }) {
   const [open, setOpen] = useState(false);
 
@@ -46,92 +54,74 @@ export function SideNav({ departments }: { departments: Department[] }) {
         </span>
       </button>
 
-      {/* Backdrop */}
+      {/* Full-screen takeover — opaque gradient, so no backdrop-blur is
+       * needed (blur on an ancestor of a fixed element breaks the fixed
+       * element's positioning; learned that the hard way on the header). */}
       <div
-        onClick={() => setOpen(false)}
-        aria-hidden
-        className={`fixed inset-0 z-40 bg-black/30 backdrop-blur-[2px] transition-opacity duration-300 ${
+        style={PANEL_BACKGROUND}
+        className={`fixed inset-0 z-50 flex flex-col overflow-y-auto p-6 transition-all duration-500 ease-out sm:p-10 ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
-        }`}
-      />
-
-      {/* Drawer */}
-      <div
-        className={`fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col bg-surface shadow-xl transition-transform duration-300 ease-out ${
-          open ? "translate-x-0" : "-translate-x-full"
         }`}
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
       >
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <span className="font-semibold text-foreground">Menu</span>
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+            Menu
+          </span>
           <button
             type="button"
             onClick={() => setOpen(false)}
             aria-label="Close menu"
-            className="text-lg text-muted transition-transform duration-200 hover:rotate-90 hover:text-foreground"
+            className="text-2xl text-foreground transition-transform duration-200 hover:rotate-90"
           >
             ✕
           </button>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-4 overflow-y-auto px-4 py-4">
+        <nav className="flex flex-1 flex-col justify-center gap-3 py-12 sm:gap-4">
           <Link
             href="/"
             onClick={() => setOpen(false)}
-            className="inline-block w-fit font-medium text-foreground transition-transform hover:translate-x-0.5 hover:text-brand"
+            className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
           >
             Home
           </Link>
-
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
-              Departments
-            </span>
-            {departments.map((dept) => (
-              <Link
-                key={dept.id}
-                href={`/${dept.slug}`}
-                onClick={() => setOpen(false)}
-                className="inline-block w-fit text-sm text-foreground transition-transform hover:translate-x-0.5 hover:text-brand"
-              >
-                {dept.name}
-              </Link>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-1.5">
-            <span className="text-xs font-semibold uppercase tracking-wide text-muted">
-              Other pages
-            </span>
+          {departments.map((dept) => (
             <Link
-              href="/hacks"
+              key={dept.id}
+              href={`/${dept.slug}`}
               onClick={() => setOpen(false)}
-              className="inline-block w-fit text-sm text-foreground transition-transform hover:translate-x-0.5 hover:text-brand"
+              className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
             >
-              Hacks &amp; Improvement Ideas
+              {dept.name}
             </Link>
-            <Link
-              href="/glossary"
-              onClick={() => setOpen(false)}
-              className="inline-block w-fit text-sm text-foreground transition-transform hover:translate-x-0.5 hover:text-brand"
-            >
-              Glossary
-            </Link>
-          </div>
+          ))}
+          <Link
+            href="/hacks"
+            onClick={() => setOpen(false)}
+            className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
+          >
+            Hacks
+          </Link>
+          <Link
+            href="/glossary"
+            onClick={() => setOpen(false)}
+            className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
+          >
+            Glossary
+          </Link>
         </nav>
 
-        <div className="border-t border-border px-4 py-4">
+        <div className="flex flex-col gap-4 border-t border-border/60 pt-6 sm:flex-row sm:items-end sm:justify-between">
           <FeedbackForm />
-          <Link
-            href="/feedback"
-            onClick={() => setOpen(false)}
-            className="mt-2 inline-block text-xs text-muted hover:text-brand"
-          >
-            View past feedback →
-          </Link>
-          <p className="mt-4 text-center text-xs text-muted">Designed and developed by Isaac Tham</p>
+          <div className="flex flex-col gap-1 text-xs text-muted">
+            <Link href="/feedback" onClick={() => setOpen(false)} className="hover:text-brand">
+              View past feedback →
+            </Link>
+            <p>Designed and developed by Isaac Tham</p>
+          </div>
         </div>
       </div>
     </>
@@ -144,34 +134,37 @@ function FeedbackForm() {
 
   if (state && "success" in state) {
     return (
-      <p className="animate-page-in rounded-md bg-green-50 px-3 py-2 text-sm text-green-800">
-        Thanks — feedback sent!
-      </p>
+      <p className="animate-page-in text-sm text-green-700">Thanks — feedback sent!</p>
     );
   }
 
   return (
-    <form action={formAction} className="flex flex-col gap-2">
-      <label htmlFor="feedback-message" className="text-xs font-semibold uppercase tracking-wide text-muted">
+    <form action={formAction} className="flex w-full max-w-sm flex-col gap-2">
+      <label
+        htmlFor="feedback-message"
+        className="text-xs font-semibold uppercase tracking-wide text-muted"
+      >
         Feedback
       </label>
       <input type="hidden" name="page_path" value={pathname} />
-      <textarea
-        id="feedback-message"
-        name="message"
-        required
-        rows={3}
-        placeholder="What should be improved or changed?"
-        className="rounded-md border border-border bg-background px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/50"
-      />
+      <div className="flex gap-2">
+        <textarea
+          id="feedback-message"
+          name="message"
+          required
+          rows={1}
+          placeholder="What should be improved or changed?"
+          className="flex-1 resize-none rounded-md border border-border bg-surface/70 px-2.5 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
+        />
+        <button
+          type="submit"
+          disabled={pending}
+          className="shrink-0 rounded-md bg-brand px-3 py-1.5 text-xs font-medium text-brand-foreground transition-all hover:bg-brand-hover active:scale-95 disabled:opacity-60 disabled:active:scale-100"
+        >
+          {pending ? "Sending…" : "Send"}
+        </button>
+      </div>
       {state?.error && <p className="text-xs text-red-600">{state.error}</p>}
-      <button
-        type="submit"
-        disabled={pending}
-        className="self-start rounded-md bg-brand px-3 py-1.5 text-xs font-medium text-brand-foreground hover:bg-brand-hover active:scale-95 disabled:opacity-60 disabled:active:scale-100"
-      >
-        {pending ? "Sending…" : "Send feedback"}
-      </button>
     </form>
   );
 }

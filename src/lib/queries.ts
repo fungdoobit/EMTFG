@@ -292,9 +292,9 @@ export async function searchProcesses(query: string): Promise<SearchResult[]> {
 
 /** Deliberately uses the admin (service role) client, not the anon one —
  * feedback has RLS enabled with zero policies, so the anon key can't read
- * it at all. Callers MUST check isUnlocked() before calling this; unlike
- * every other function in this file, reading feedback is not open to
- * anyone with the link. */
+ * it at all. Callers MUST check isFeedbackUnlocked() before calling this —
+ * a passcode separate from the general edit one, since anyone who can edit
+ * content should not automatically be able to read feedback submissions. */
 export async function getFeedbackList(): Promise<Feedback[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase
