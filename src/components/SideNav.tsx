@@ -125,14 +125,16 @@ export function SideNav({ departments }: { departments: Department[] }) {
             </Link>
           </nav>
 
-          <div className="flex flex-col gap-4 border-t border-border/60 pt-6 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex flex-col gap-2 border-t border-border/60 pt-6">
             <FeedbackForm />
-            <div className="flex flex-col gap-1 text-xs text-muted">
-              <Link href="/feedback" onClick={() => setOpen(false)} className="hover:text-brand">
-                View past feedback →
-              </Link>
-              <p>Designed and developed by Isaac Tham</p>
-            </div>
+            <Link
+              href="/feedback"
+              onClick={() => setOpen(false)}
+              className="text-xs text-muted hover:text-brand"
+            >
+              View past feedback →
+            </Link>
+            <p className="text-xs text-muted">Designed and developed by Isaac Tham</p>
           </div>
         </div>
       </div>
