@@ -6,10 +6,59 @@ const CHASE = 0.35;
 const ANGLE_CHASE = 0.3;
 const LENGTH = 26;
 const WIDTH = 20;
+const CORNER_RADIUS = 3;
+
+type Point = { x: number; y: number };
+
+/** Builds a closed path that traces the given polygon but replaces each
+ * sharp vertex with a short quadratic curve, i.e. a rounded-corner
+ * version of the polygon — SVG has no border-radius equivalent for
+ * <polygon>, so this is what rounding an arbitrary (including concave)
+ * shape actually takes. */
+function roundedPolygonPath(points: Point[], radius: number): string {
+  const n = points.length;
+  let d = "";
+  for (let i = 0; i < n; i++) {
+    const curr = points[i];
+    const prev = points[(i - 1 + n) % n];
+    const next = points[(i + 1) % n];
+
+    const towardPrev = { x: prev.x - curr.x, y: prev.y - curr.y };
+    const towardNext = { x: next.x - curr.x, y: next.y - curr.y };
+    const prevLen = Math.hypot(towardPrev.x, towardPrev.y);
+    const nextLen = Math.hypot(towardNext.x, towardNext.y);
+    const rPrev = Math.min(radius, prevLen / 2);
+    const rNext = Math.min(radius, nextLen / 2);
+
+    const enter = {
+      x: curr.x + (towardPrev.x / prevLen) * rPrev,
+      y: curr.y + (towardPrev.y / prevLen) * rPrev,
+    };
+    const exit = {
+      x: curr.x + (towardNext.x / nextLen) * rNext,
+      y: curr.y + (towardNext.y / nextLen) * rNext,
+    };
+
+    d += i === 0 ? `M ${enter.x} ${enter.y} ` : `L ${enter.x} ${enter.y} `;
+    d += `Q ${curr.x} ${curr.y} ${exit.x} ${exit.y} `;
+  }
+  return d + "Z";
+}
+
+const ARROWHEAD_PATH = roundedPolygonPath(
+  [
+    { x: LENGTH * 0.65, y: 0 },
+    { x: -LENGTH * 0.35, y: WIDTH / 2 },
+    { x: -LENGTH * 0.05, y: 0 },
+    { x: -LENGTH * 0.35, y: -WIDTH / 2 },
+  ],
+  CORNER_RADIUS
+);
 
 /** The whole cursor is a single arrowhead — a triangle with a concave notch
- * cut into its back edge, not a plain triangle, and not a separate pivot
- * dot plus a line/rectangle tail. It lags a step behind the real pointer
+ * cut into its back edge and its corners rounded off, not a plain sharp
+ * triangle, and not a separate pivot dot plus a line/rectangle tail. It
+ * lags a step behind the real pointer
  * position (that lag is the "tail follows" effect) and its
  * rotation eases toward the direction of travel via shortest-path angle
  * lerp, which is what makes it wiggle on quick turns instead of snapping.
@@ -20,7 +69,7 @@ const WIDTH = 20;
  * Text inputs keep the normal cursor (see .custom-cursor-active in
  * globals.css) so the app's many forms stay usable. */
 export function CustomCursor() {
-  const triangleRef = useRef<SVGPolygonElement>(null);
+  const triangleRef = useRef<SVGPathElement>(null);
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
@@ -81,11 +130,7 @@ export function CustomCursor() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-[100] h-full w-full mix-blend-difference"
     >
-      <polygon
-        ref={triangleRef}
-        points={`${LENGTH * 0.65},0 ${-LENGTH * 0.35},${WIDTH / 2} ${-LENGTH * 0.05},0 ${-LENGTH * 0.35},${-WIDTH / 2}`}
-        fill="white"
-      />
+      <path ref={triangleRef} d={ARROWHEAD_PATH} fill="white" />
     </svg>
   );
 }
