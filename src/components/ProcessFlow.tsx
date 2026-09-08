@@ -8,7 +8,11 @@ export function ProcessFlow({ steps }: { steps: ProcessStep[] }) {
   return (
     <ol className="flex flex-col">
       {steps.map((step, i) => (
-        <li key={step.id} className="flex gap-4">
+        <li
+          key={step.id}
+          className="animate-page-in flex gap-4"
+          style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
+        >
           <div className="flex flex-col items-center">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-brand-foreground">
               {i + 1}

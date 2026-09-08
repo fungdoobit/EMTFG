@@ -42,7 +42,10 @@ export function ImprovementIdeasWidget({
           </p>
           <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface">
             {sorted.map((hack) => (
-              <li key={hack.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
+              <li
+                key={hack.id}
+                className="flex items-center justify-between gap-3 px-4 py-2.5 transition-colors hover:bg-background"
+              >
                 <div className="flex min-w-0 flex-col">
                   <span className="truncate text-sm font-medium text-foreground">{hack.title}</span>
                   {hack.process && (

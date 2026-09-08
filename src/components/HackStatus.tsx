@@ -45,7 +45,7 @@ export function HackStatusControl({
         name="status"
         defaultValue={status}
         onChange={(e) => e.currentTarget.form?.requestSubmit()}
-        className={`shrink-0 rounded-full border px-2 py-0.5 text-xs font-medium ${STATUS_CLASS[status]}`}
+        className={`shrink-0 cursor-pointer rounded-full border px-2 py-0.5 text-xs font-medium transition-transform hover:scale-105 ${STATUS_CLASS[status]}`}
       >
         {(Object.keys(STATUS_LABEL) as HackStatus[]).map((value) => (
           <option key={value} value={value}>

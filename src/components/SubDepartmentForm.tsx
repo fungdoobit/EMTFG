@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { createSubDepartment } from "@/lib/actions";
+import { btnPrimaryLg } from "@/lib/ui";
 
 export function SubDepartmentForm({
   departmentSlug,
@@ -26,7 +27,7 @@ export function SubDepartmentForm({
           name="name"
           required
           placeholder="e.g. PHE, T12W, or a full name"
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
       </div>
 
@@ -38,7 +39,7 @@ export function SubDepartmentForm({
           id="tools_systems"
           name="tools_systems"
           placeholder="e.g. Excel, Autocount, SharePoint"
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
       </div>
 
@@ -51,7 +52,7 @@ export function SubDepartmentForm({
           name="general_note"
           rows={3}
           placeholder="Anything worth flagging across every process here — shared risks, quirks, etc."
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
       </div>
 
@@ -60,7 +61,7 @@ export function SubDepartmentForm({
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-md bg-brand px-4 py-2 text-sm font-medium text-brand-foreground disabled:opacity-60"
+        className={`self-start ${btnPrimaryLg} disabled:opacity-60 disabled:active:scale-100`}
       >
         {pending ? "Saving…" : "Create sub-department"}
       </button>

@@ -4,6 +4,7 @@ import { getProcessesForSubDepartment, getSubDepartmentBySlug } from "@/lib/quer
 import { isUnlocked } from "@/lib/auth";
 import { deleteContact } from "@/lib/actions";
 import { DeleteButton } from "@/components/DeleteButton";
+import { btnPrimary } from "@/lib/ui";
 
 export default async function SubDepartmentPage({
   params,
@@ -71,7 +72,10 @@ export default async function SubDepartmentPage({
             <table className="w-full text-left text-sm">
               <tbody>
                 {subDepartment.contacts.map((contact) => (
-                  <tr key={contact.id} className="border-b border-border last:border-0">
+                  <tr
+                    key={contact.id}
+                    className="border-b border-border transition-colors last:border-0 hover:bg-background"
+                  >
                     <td className="whitespace-nowrap px-3 py-2 font-medium text-foreground align-top">
                       {contact.name}
                     </td>
@@ -113,10 +117,7 @@ export default async function SubDepartmentPage({
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
             Processes
           </h2>
-          <Link
-            href={`/${deptSlug}/${subSlug}/new`}
-            className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-brand-foreground"
-          >
+          <Link href={`/${deptSlug}/${subSlug}/new`} className={btnPrimary}>
             + Add new process
           </Link>
         </div>
@@ -129,7 +130,7 @@ export default async function SubDepartmentPage({
               <li key={process.id}>
                 <Link
                   href={`/${deptSlug}/${subSlug}/${process.slug}`}
-                  className="flex items-center justify-between gap-4 px-4 py-3 hover:bg-background"
+                  className="flex items-center justify-between gap-4 px-4 py-3 transition-colors hover:bg-background"
                 >
                   <span className="font-medium text-foreground">{process.title}</span>
                   {process.updated_by && (

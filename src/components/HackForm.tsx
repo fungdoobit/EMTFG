@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { createHack, updateHack } from "@/lib/actions";
+import { btnPrimaryLg } from "@/lib/ui";
 import type { ProcessOption } from "@/lib/types";
 
 type Props =
@@ -43,7 +44,7 @@ export function HackForm(props: Props) {
           name="title"
           required
           defaultValue={props.mode === "edit" ? props.initialTitle : ""}
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
       </div>
 
@@ -57,7 +58,7 @@ export function HackForm(props: Props) {
           required
           rows={4}
           defaultValue={props.mode === "edit" ? props.initialDescription : ""}
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
       </div>
 
@@ -71,7 +72,7 @@ export function HackForm(props: Props) {
           defaultValue={
             props.mode === "edit" ? props.initialProcessId : props.initialProcessId ?? ""
           }
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         >
           <option value="">— No process (standalone idea) —</option>
           {[...grouped.entries()].map(([subDeptName, options]) => (
@@ -96,7 +97,7 @@ export function HackForm(props: Props) {
             name="author_name"
             required
             placeholder="So others know who suggested this"
-            className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand sm:w-64"
+            className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand sm:w-64"
           />
         </div>
       )}
@@ -106,7 +107,7 @@ export function HackForm(props: Props) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-md bg-brand px-4 py-2 text-sm font-medium text-brand-foreground disabled:opacity-60"
+        className={`self-start ${btnPrimaryLg} disabled:opacity-60 disabled:active:scale-100`}
       >
         {pending ? "Saving…" : props.mode === "create" ? "Add hack" : "Save changes"}
       </button>

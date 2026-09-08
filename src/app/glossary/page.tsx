@@ -23,7 +23,10 @@ export default async function GlossaryPage() {
           </thead>
           <tbody>
             {terms.map((term) => (
-              <tr key={term.id} className="border-b border-border last:border-0 align-top">
+              <tr
+                key={term.id}
+                className="border-b border-border align-top transition-colors last:border-0 hover:bg-background"
+              >
                 <td className="whitespace-nowrap px-4 py-2.5 font-semibold text-foreground">
                   {term.abbreviation}
                 </td>

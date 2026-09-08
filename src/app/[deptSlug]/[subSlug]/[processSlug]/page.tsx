@@ -7,6 +7,7 @@ import { deleteProcess } from "@/lib/actions";
 import { ProcessFlow } from "@/components/ProcessFlow";
 import { HackCard } from "@/components/HackCard";
 import { DeleteButton } from "@/components/DeleteButton";
+import { btnSecondary } from "@/lib/ui";
 
 const IMAGE_EXTENSIONS = /\.(png|jpe?g|gif|webp|svg)$/i;
 
@@ -48,10 +49,7 @@ export default async function ProcessPage({
           <h1 className="text-2xl font-semibold text-foreground">{process.title}</h1>
           {unlocked && (
             <div className="flex gap-2">
-              <Link
-                href={`/${deptSlug}/${subSlug}/${processSlug}/edit`}
-                className="rounded-md border border-border px-3 py-1.5 text-sm font-medium text-foreground hover:border-brand"
-              >
+              <Link href={`/${deptSlug}/${subSlug}/${processSlug}/edit`} className={btnSecondary}>
                 Edit
               </Link>
               <form action={deleteProcess}>

@@ -5,6 +5,7 @@ import { deleteHack } from "@/lib/actions";
 import { HackCard } from "@/components/HackCard";
 import { HackStatusControl } from "@/components/HackStatus";
 import { DeleteButton } from "@/components/DeleteButton";
+import { btnPrimary } from "@/lib/ui";
 import type { HackWithProcess } from "@/lib/types";
 
 function HackActions({ hack }: { hack: HackWithProcess }) {
@@ -35,10 +36,7 @@ export default async function HacksPage() {
             Every hack suggested across every process, plus standalone ideas with no process yet.
           </p>
         </div>
-        <Link
-          href="/hacks/new"
-          className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-brand-foreground"
-        >
+        <Link href="/hacks/new" className={btnPrimary}>
           + Suggest a hack
         </Link>
       </div>

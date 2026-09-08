@@ -7,6 +7,7 @@ import {
 } from "@/lib/queries";
 import { isUnlocked } from "@/lib/auth";
 import { ImprovementIdeasWidget } from "@/components/ImprovementIdeasWidget";
+import { btnPrimary, cardClass } from "@/lib/ui";
 
 export default async function DepartmentPage({ params }: PageProps<"/[deptSlug]">) {
   const { deptSlug } = await params;
@@ -41,10 +42,7 @@ export default async function DepartmentPage({ params }: PageProps<"/[deptSlug]"
         <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
           Sub-departments
         </h2>
-        <Link
-          href={`/${deptSlug}/new`}
-          className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-brand-foreground"
-        >
+        <Link href={`/${deptSlug}/new`} className={btnPrimary}>
           + Add sub-department
         </Link>
       </div>
@@ -53,11 +51,12 @@ export default async function DepartmentPage({ params }: PageProps<"/[deptSlug]"
         <p className="text-sm text-muted">No sub-departments yet.</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {subDepartments.map((sub) => (
+          {subDepartments.map((sub, i) => (
             <Link
               key={sub.id}
               href={`/${department.slug}/${sub.slug}`}
-              className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-5 shadow-sm transition hover:border-brand hover:shadow-md"
+              style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
+              className={`animate-page-in flex flex-col gap-3 ${cardClass}`}
             >
               <div>
                 <h2 className="text-lg font-medium text-foreground">{sub.name}</h2>

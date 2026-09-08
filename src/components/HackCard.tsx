@@ -16,7 +16,7 @@ export function HackCard({
   statusControl?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-border bg-surface p-4">
+    <div className="rounded-lg border border-border bg-surface p-4 transition-shadow duration-200 hover:shadow-sm">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-2">
           <h3 className="font-medium text-foreground">🔧 {hack.title}</h3>

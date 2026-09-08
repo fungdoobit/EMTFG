@@ -17,14 +17,20 @@ export default async function HomePage() {
         <p className="text-sm text-muted">No departments yet.</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {departments.map((dept) => (
+          {departments.map((dept, i) => (
             <Link
               key={dept.id}
               href={`/${dept.slug}`}
-              className="rounded-lg border border-border bg-surface p-5 shadow-sm transition hover:border-brand hover:shadow-md"
+              style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
+              className="group animate-page-in rounded-lg border border-border bg-surface p-5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-brand hover:shadow-md active:translate-y-0"
             >
               <h2 className="text-lg font-medium text-foreground">{dept.name}</h2>
-              <p className="mt-1 text-sm text-muted">Browse sub-departments and processes →</p>
+              <p className="mt-1 text-sm text-muted">
+                Browse sub-departments and processes{" "}
+                <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
+                  →
+                </span>
+              </p>
             </Link>
           ))}
         </div>

@@ -24,7 +24,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
       ) : (
         <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface">
           {results.map((result) => (
-            <li key={result.process.id} className="px-4 py-3">
+            <li key={result.process.id} className="px-4 py-3 transition-colors hover:bg-background">
               <Link
                 href={`/${result.department.slug}/${result.sub_department.slug}/${result.process.slug}`}
                 className="font-medium text-foreground hover:text-brand"

@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { createProcess, updateProcess } from "@/lib/actions";
+import { btnPrimaryLg } from "@/lib/ui";
 import type { ProcessAttachment, ProcessStep } from "@/lib/types";
 
 type StepDraft = { key: number; title: string; description: string };
@@ -70,14 +71,17 @@ export function ProcessForm(props: Props) {
           name="title"
           required
           defaultValue={props.mode === "edit" ? props.initialTitle : ""}
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
       </div>
 
       <div className="flex flex-col gap-3">
         <label className="text-sm font-medium text-foreground">Steps</label>
         {steps.map((step, i) => (
-          <div key={step.key} className="flex gap-3 rounded-lg border border-border bg-surface p-3">
+          <div
+            key={step.key}
+            className="animate-page-in flex gap-3 rounded-lg border border-border bg-surface p-3 transition-colors"
+          >
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-background text-xs font-semibold text-muted">
               {i + 1}
             </span>
@@ -88,7 +92,7 @@ export function ProcessForm(props: Props) {
                 placeholder="Step title"
                 value={step.title}
                 onChange={(e) => updateStep(step.key, "title", e.target.value)}
-                className="rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+                className="rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
               />
               <textarea
                 name="step_description"
@@ -96,14 +100,14 @@ export function ProcessForm(props: Props) {
                 rows={2}
                 value={step.description}
                 onChange={(e) => updateStep(step.key, "description", e.target.value)}
-                className="rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+                className="rounded-md border border-border bg-background px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
               />
             </div>
             <button
               type="button"
               onClick={() => removeStep(step.key)}
               disabled={steps.length === 1}
-              className="h-7 shrink-0 text-sm text-muted hover:text-red-600 disabled:opacity-30"
+              className="h-7 shrink-0 text-sm text-muted transition-all hover:scale-110 hover:text-red-600 disabled:opacity-30 disabled:hover:scale-100"
               aria-label="Remove step"
             >
               ✕
@@ -113,7 +117,7 @@ export function ProcessForm(props: Props) {
         <button
           type="button"
           onClick={() => setSteps((prev) => [...prev, toDraft()])}
-          className="self-start rounded-md border border-dashed border-border px-3 py-1.5 text-sm text-muted hover:border-brand hover:text-brand"
+          className="self-start rounded-md border border-dashed border-border px-3 py-1.5 text-sm text-muted transition-all hover:border-brand hover:bg-background hover:text-brand active:scale-95"
         >
           + Add step
         </button>
@@ -128,7 +132,7 @@ export function ProcessForm(props: Props) {
           name="notes"
           rows={3}
           defaultValue={props.mode === "edit" ? props.initialNotes : ""}
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
       </div>
 
@@ -141,7 +145,7 @@ export function ProcessForm(props: Props) {
           name="approver"
           placeholder="e.g. Dr. Khana, Ms. Ho, HQ"
           defaultValue={props.mode === "edit" ? props.initialApprover : ""}
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand sm:w-64"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand sm:w-64"
         />
         <p className="text-xs text-muted">
           Just documentation — who to physically walk this to, not a tracked approval status.
@@ -181,7 +185,7 @@ export function ProcessForm(props: Props) {
           name="author_name"
           required
           placeholder="So others know who added/edited this"
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand sm:w-64"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand sm:w-64"
         />
       </div>
 
@@ -190,7 +194,7 @@ export function ProcessForm(props: Props) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-md bg-brand px-4 py-2 text-sm font-medium text-brand-foreground disabled:opacity-60"
+        className={`self-start ${btnPrimaryLg} disabled:opacity-60 disabled:active:scale-100`}
       >
         {pending ? "Saving…" : props.mode === "create" ? "Create process" : "Save changes"}
       </button>

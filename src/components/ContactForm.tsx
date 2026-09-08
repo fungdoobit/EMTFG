@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { createContact, updateContact } from "@/lib/actions";
+import { btnPrimaryLg } from "@/lib/ui";
 
 type Props =
   | {
@@ -42,7 +43,7 @@ export function ContactForm(props: Props) {
           name="name"
           required
           defaultValue={props.mode === "edit" ? props.initialName : ""}
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand sm:w-64"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand sm:w-64"
         />
       </div>
 
@@ -57,7 +58,7 @@ export function ContactForm(props: Props) {
           rows={2}
           placeholder="e.g. Penang Port invoices, Maersk local charges"
           defaultValue={props.mode === "edit" ? props.initialHandles : ""}
-          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
         />
       </div>
 
@@ -66,7 +67,7 @@ export function ContactForm(props: Props) {
       <button
         type="submit"
         disabled={pending}
-        className="self-start rounded-md bg-brand px-4 py-2 text-sm font-medium text-brand-foreground disabled:opacity-60"
+        className={`self-start ${btnPrimaryLg} disabled:opacity-60 disabled:active:scale-100`}
       >
         {pending ? "Saving…" : props.mode === "create" ? "Add contact" : "Save changes"}
       </button>

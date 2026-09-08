@@ -25,7 +25,7 @@ export function SearchBar() {
         onChange={(e) => setValue(e.target.value)}
         placeholder="Search processes…"
         aria-label="Search processes"
-        className="w-full rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand"
+        className="w-full rounded-md border border-border bg-surface px-3 py-1.5 text-sm text-foreground placeholder:text-muted focus:outline-none focus:ring-2 focus:ring-brand/40 focus:border-brand"
       />
     </form>
   );
