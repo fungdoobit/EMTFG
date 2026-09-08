@@ -6,12 +6,17 @@ import { useActionState, useEffect, useState } from "react";
 import { submitFeedback } from "@/lib/actions";
 import type { Department } from "@/lib/types";
 
-const PANEL_BACKGROUND = {
+// Opaque near the left (where the nav text lives), fading to fully
+// transparent toward the right — paired with a backdrop-blur layer
+// underneath, so what shows through on the right is the real page,
+// softly blurred, instead of a hard-edged panel.
+const GRADIENT_OVERLAY = {
   backgroundImage: [
-    "radial-gradient(120% 100% at 15% 0%, color-mix(in oklab, var(--brand) 22%, var(--surface)), transparent 60%)",
-    "radial-gradient(120% 100% at 100% 100%, color-mix(in oklab, var(--accent) 18%, var(--surface)), transparent 60%)",
-  ].join(", "),
-  backgroundColor: "var(--surface)",
+    "linear-gradient(100deg,",
+    "color-mix(in oklab, var(--brand) 22%, var(--surface)) 0%,",
+    "color-mix(in oklab, var(--accent) 16%, var(--surface)) 40%,",
+    "transparent 85%)",
+  ].join(" "),
 };
 
 export function SideNav({ departments }: { departments: Department[] }) {
@@ -54,73 +59,80 @@ export function SideNav({ departments }: { departments: Department[] }) {
         </span>
       </button>
 
-      {/* Full-screen takeover — opaque gradient, so no backdrop-blur is
-       * needed (blur on an ancestor of a fixed element breaks the fixed
-       * element's positioning; learned that the hard way on the header). */}
+      {/* Full-screen takeover, but not a flat opaque panel: a blur layer
+       * sits behind everything, and an opaque-to-transparent gradient sits
+       * on top of that — solid color where the text lives, fading away so
+       * the real page shows through, softly blurred, toward the right.
+       * The blur is on this panel itself, not an ancestor of anything
+       * fixed, so it doesn't repeat the header's containing-block bug. */}
       <div
-        style={PANEL_BACKGROUND}
-        className={`fixed inset-0 z-50 flex flex-col overflow-y-auto p-6 transition-all duration-500 ease-out sm:p-10 ${
+        className={`fixed inset-0 z-50 transition-opacity duration-500 ease-out ${
           open ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
       >
-        <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
-            Menu
-          </span>
-          <button
-            type="button"
-            onClick={() => setOpen(false)}
-            aria-label="Close menu"
-            className="text-2xl text-foreground transition-transform duration-200 hover:rotate-90"
-          >
-            ✕
-          </button>
-        </div>
+        <div className="absolute inset-0 backdrop-blur-md" />
+        <div className="absolute inset-0" style={GRADIENT_OVERLAY} />
 
-        <nav className="flex flex-1 flex-col justify-center gap-3 py-12 sm:gap-4">
-          <Link
-            href="/"
-            onClick={() => setOpen(false)}
-            className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
-          >
-            Home
-          </Link>
-          {departments.map((dept) => (
+        <div className="relative flex h-full flex-col overflow-y-auto p-6 sm:p-10">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-muted">
+              Menu
+            </span>
+            <button
+              type="button"
+              onClick={() => setOpen(false)}
+              aria-label="Close menu"
+              className="text-2xl text-foreground transition-transform duration-200 hover:rotate-90"
+            >
+              ✕
+            </button>
+          </div>
+
+          <nav className="flex flex-1 flex-col justify-center gap-3 py-12 sm:gap-4">
             <Link
-              key={dept.id}
-              href={`/${dept.slug}`}
+              href="/"
               onClick={() => setOpen(false)}
               className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
             >
-              {dept.name}
+              Home
             </Link>
-          ))}
-          <Link
-            href="/hacks"
-            onClick={() => setOpen(false)}
-            className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
-          >
-            Hacks
-          </Link>
-          <Link
-            href="/glossary"
-            onClick={() => setOpen(false)}
-            className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
-          >
-            Glossary
-          </Link>
-        </nav>
+            {departments.map((dept) => (
+              <Link
+                key={dept.id}
+                href={`/${dept.slug}`}
+                onClick={() => setOpen(false)}
+                className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
+              >
+                {dept.name}
+              </Link>
+            ))}
+            <Link
+              href="/hacks"
+              onClick={() => setOpen(false)}
+              className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
+            >
+              Hacks
+            </Link>
+            <Link
+              href="/glossary"
+              onClick={() => setOpen(false)}
+              className="w-fit text-3xl font-semibold tracking-tight text-foreground transition-transform hover:translate-x-1.5 hover:text-brand sm:text-4xl"
+            >
+              Glossary
+            </Link>
+          </nav>
 
-        <div className="flex flex-col gap-4 border-t border-border/60 pt-6 sm:flex-row sm:items-end sm:justify-between">
-          <FeedbackForm />
-          <div className="flex flex-col gap-1 text-xs text-muted">
-            <Link href="/feedback" onClick={() => setOpen(false)} className="hover:text-brand">
-              View past feedback →
-            </Link>
-            <p>Designed and developed by Isaac Tham</p>
+          <div className="flex flex-col gap-4 border-t border-border/60 pt-6 sm:flex-row sm:items-end sm:justify-between">
+            <FeedbackForm />
+            <div className="flex flex-col gap-1 text-xs text-muted">
+              <Link href="/feedback" onClick={() => setOpen(false)} className="hover:text-brand">
+                View past feedback →
+              </Link>
+              <p>Designed and developed by Isaac Tham</p>
+            </div>
           </div>
         </div>
       </div>
