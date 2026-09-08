@@ -412,3 +412,34 @@ export async function updateHackStatus(formData: FormData): Promise<void> {
   revalidatePath("/hacks");
   if (departmentSlug) revalidatePath(`/${departmentSlug}`);
 }
+
+// ── Feedback ─────────────────────────────────────────────────────────
+// Deliberately the one write action in this app with no requireUnlocked()
+// call — feedback is meant to be open to anyone, not just people who know
+// the passcode.
+
+export type FeedbackState = { success: true } | { error: string } | null;
+
+const FEEDBACK_MAX_LENGTH = 2000;
+
+export async function submitFeedback(
+  _prevState: FeedbackState,
+  formData: FormData
+): Promise<FeedbackState> {
+  const message = String(formData.get("message") ?? "").trim();
+  const pagePath = String(formData.get("page_path") ?? "").trim();
+
+  if (!message) return { error: "Say something first." };
+  if (message.length > FEEDBACK_MAX_LENGTH) {
+    return { error: `Keep it under ${FEEDBACK_MAX_LENGTH} characters.` };
+  }
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("feedback").insert({
+    message,
+    page_path: pagePath || null,
+  });
+  if (error) return { error: `Could not send feedback: ${error.message}` };
+
+  return { success: true };
+}

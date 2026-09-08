@@ -172,6 +172,22 @@ create table if not exists glossary_terms (
   sort_order int not null default 0
 );
 
+-- ── Feedback ─────────────────────────────────────────────────────────────
+-- Open to anyone, no passcode — unlike every other write in this app. RLS
+-- is enabled with zero policies, so the anon key can't read or write this
+-- table directly either; submission only ever happens through the
+-- submitFeedback Server Action (service role key). Read it from the
+-- Supabase dashboard's Table Editor, which uses your own project access
+-- and isn't subject to these policies.
+create table if not exists feedback (
+  id uuid primary key default gen_random_uuid(),
+  message text not null,
+  page_path text,
+  created_at timestamptz not null default now()
+);
+
+alter table feedback enable row level security;
+
 -- ── Row Level Security ───────────────────────────────────────────────────
 -- Everyone (the "anon" key, used by the browser) can read. Nobody can write
 -- through the anon key — all inserts/updates/deletes go through Server

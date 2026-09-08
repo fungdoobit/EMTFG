@@ -47,6 +47,7 @@ table is shaped the way it is. Short version:
 | `process_attachments` | Optional files/screenshots per process, stored in Supabase Storage. |
 | `hacks` | Improvement ideas. `process_id` is a **nullable** foreign key — a hack can be linked to the process it improves, or stand alone. One table drives both "notes under a process" and the standalone Hacks page. |
 | `glossary_terms` | Cross-department abbreviations, not tied to any sub-department. |
+| `feedback` | Open submission from the side menu — the one write path in the app with no passcode check. RLS enabled with zero policies, so it's readable only from the Supabase dashboard's Table Editor, not through the public API at all. |
 
 ## Local development
 
