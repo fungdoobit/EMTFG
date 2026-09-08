@@ -2,22 +2,25 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** The exact pointer position is a fixed pivot; a short tail is anchored
- * there and swings to point back along the direction of recent movement,
- * lagging with rotational inertia (shortest-path angle lerp, so it never
- * spins the long way around) and growing longer the faster the pointer
- * moves, retracting toward nothing at rest. No dot-and-ring pair — this is
- * one small pivot mark plus one tail.
+const CHAIN_LENGTH = 7;
+const PIVOT_CHASE = 0.45;
+const LINK_CHASE = 0.4;
+const HEAD_SIZE = 7;
+
+/** A pointed head sits exactly at the pivot (the real pointer position) and
+ * a short chain of links trails behind it, each one chasing the link ahead
+ * with the same lerp factor — that cascade is what makes the tail flow and
+ * wiggle on quick or curved moves instead of just dragging in a straight
+ * line. The whole thing is drawn in white with mix-blend-mode: difference,
+ * so it inverts whatever color it's over rather than sitting on top of it.
  *
- * Desktop only (pointer: fine) and fully skipped under
- * prefers-reduced-motion. Text inputs keep the normal cursor (see
- * .custom-cursor-active in globals.css) so the app's many forms stay
- * usable. */
+ * Desktop only (pointer: fine) and skipped under prefers-reduced-motion.
+ * Text inputs keep the normal cursor (see .custom-cursor-active in
+ * globals.css) so the app's many forms stay usable. */
 export function CustomCursor() {
-  const pivotRef = useRef<HTMLDivElement>(null);
-  const tailRef = useRef<HTMLDivElement>(null);
+  const pathRef = useRef<SVGPathElement>(null);
+  const headRef = useRef<SVGPolygonElement>(null);
   const [enabled, setEnabled] = useState(false);
-  const [hovering, setHovering] = useState(false);
 
   useEffect(() => {
     const isFinePointer = window.matchMedia("(pointer: fine)").matches;
@@ -32,49 +35,43 @@ export function CustomCursor() {
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    let prevX = mouseX;
-    let prevY = mouseY;
-    let smoothAngle = 0;
-    let smoothLength = 0;
+    const chain = Array.from({ length: CHAIN_LENGTH }, () => ({ x: mouseX, y: mouseY }));
 
     function onMove(e: MouseEvent) {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      if (pivotRef.current) {
-        pivotRef.current.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-      }
-      const target = e.target as HTMLElement | null;
-      setHovering(!!target?.closest("a, button, select, [role='button']"));
     }
+    window.addEventListener("mousemove", onMove);
 
     let raf = 0;
     function tick() {
-      const dx = mouseX - prevX;
-      const dy = mouseY - prevY;
-      prevX = mouseX;
-      prevY = mouseY;
-
-      const speed = Math.hypot(dx, dy);
-
-      if (speed > 0.3) {
-        const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI);
-        let delta = targetAngle - smoothAngle;
-        delta = ((delta + 180) % 360 + 360) % 360 - 180;
-        smoothAngle += delta * 0.22;
+      chain[0].x += (mouseX - chain[0].x) * PIVOT_CHASE;
+      chain[0].y += (mouseY - chain[0].y) * PIVOT_CHASE;
+      for (let i = 1; i < chain.length; i++) {
+        chain[i].x += (chain[i - 1].x - chain[i].x) * LINK_CHASE;
+        chain[i].y += (chain[i - 1].y - chain[i].y) * LINK_CHASE;
       }
 
-      const targetLength = Math.min(speed * 2.4, 54);
-      smoothLength += (targetLength - smoothLength) * 0.15;
-
-      if (tailRef.current) {
-        tailRef.current.style.width = `${smoothLength}px`;
-        tailRef.current.style.transform = `translate(${mouseX}px, ${mouseY}px) translateY(-50%) rotate(${smoothAngle}deg)`;
+      let d = `M ${chain[0].x} ${chain[0].y}`;
+      for (let i = 1; i < chain.length - 1; i++) {
+        const midX = (chain[i].x + chain[i + 1].x) / 2;
+        const midY = (chain[i].y + chain[i + 1].y) / 2;
+        d += ` Q ${chain[i].x} ${chain[i].y} ${midX} ${midY}`;
       }
+      pathRef.current?.setAttribute("d", d);
+
+      const dx = chain[0].x - chain[1].x;
+      const dy = chain[0].y - chain[1].y;
+      const angle = Math.hypot(dx, dy) > 0.1 ? Math.atan2(dy, dx) * (180 / Math.PI) : 0;
+      headRef.current?.setAttribute(
+        "transform",
+        `translate(${chain[0].x} ${chain[0].y}) rotate(${angle})`
+      );
+
       raf = requestAnimationFrame(tick);
     }
     raf = requestAnimationFrame(tick);
 
-    window.addEventListener("mousemove", onMove);
     return () => {
       window.removeEventListener("mousemove", onMove);
       cancelAnimationFrame(raf);
@@ -85,17 +82,12 @@ export function CustomCursor() {
   if (!enabled) return null;
 
   return (
-    <>
-      <div
-        ref={tailRef}
-        className="pointer-events-none fixed left-0 top-0 z-[100] h-[2px] origin-left rounded-full bg-gradient-to-r from-brand/70 to-transparent"
-      />
-      <div
-        ref={pivotRef}
-        className={`pointer-events-none fixed left-0 top-0 z-[100] rounded-full bg-brand transition-[width,height] duration-200 ${
-          hovering ? "h-3 w-3" : "h-1.5 w-1.5"
-        }`}
-      />
-    </>
+    <svg
+      aria-hidden="true"
+      className="pointer-events-none fixed inset-0 z-[100] h-full w-full mix-blend-difference"
+    >
+      <path ref={pathRef} fill="none" stroke="white" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
+      <polygon ref={headRef} points={`${HEAD_SIZE},0 ${-HEAD_SIZE * 0.6},${HEAD_SIZE * 0.7} ${-HEAD_SIZE * 0.6},${-HEAD_SIZE * 0.7}`} fill="white" />
+    </svg>
   );
 }

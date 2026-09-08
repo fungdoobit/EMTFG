@@ -126,6 +126,7 @@ export function SideNav({ departments }: { departments: Department[] }) {
           </nav>
 
           <div className="flex flex-col gap-2 border-t border-border/60 pt-6">
+            <p className="text-xs text-muted">Designed and developed by Isaac Tham</p>
             <FeedbackForm />
             <Link
               href="/feedback"
@@ -134,7 +135,6 @@ export function SideNav({ departments }: { departments: Department[] }) {
             >
               View past feedback →
             </Link>
-            <p className="text-xs text-muted">Designed and developed by Isaac Tham</p>
           </div>
         </div>
       </div>
