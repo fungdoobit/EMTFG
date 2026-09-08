@@ -126,7 +126,7 @@ export function SideNav({ departments }: { departments: Department[] }) {
           </nav>
 
           <div className="flex flex-col gap-2 border-t border-border/60 pt-6">
-            <p className="text-xs text-muted">Designed and developed by Isaac Tham</p>
+            <p className="mb-3 text-xs text-muted">Designed and developed by Isaac Tham</p>
             <FeedbackForm />
             <Link
               href="/feedback"
