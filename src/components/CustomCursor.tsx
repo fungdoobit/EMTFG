@@ -4,12 +4,13 @@ import { useEffect, useRef, useState } from "react";
 
 const CHASE = 0.35;
 const ANGLE_CHASE = 0.3;
-const LENGTH = 15;
-const WIDTH = 9;
+const LENGTH = 26;
+const WIDTH = 20;
 
-/** The whole cursor is a single triangle — no separate pivot dot plus a
- * line/rectangle tail. The triangle itself lags a step behind the real
- * pointer position (that lag is the "tail follows" effect) and its
+/** The whole cursor is a single arrowhead — a triangle with a concave notch
+ * cut into its back edge, not a plain triangle, and not a separate pivot
+ * dot plus a line/rectangle tail. It lags a step behind the real pointer
+ * position (that lag is the "tail follows" effect) and its
  * rotation eases toward the direction of travel via shortest-path angle
  * lerp, which is what makes it wiggle on quick turns instead of snapping.
  * Filled white with mix-blend-mode: difference, so it inverts whatever
@@ -82,7 +83,7 @@ export function CustomCursor() {
     >
       <polygon
         ref={triangleRef}
-        points={`${LENGTH * 0.65},0 ${-LENGTH * 0.35},${WIDTH / 2} ${-LENGTH * 0.35},${-WIDTH / 2}`}
+        points={`${LENGTH * 0.65},0 ${-LENGTH * 0.35},${WIDTH / 2} ${-LENGTH * 0.05},0 ${-LENGTH * 0.35},${-WIDTH / 2}`}
         fill="white"
       />
     </svg>
