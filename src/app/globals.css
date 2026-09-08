@@ -36,13 +36,28 @@ html {
 body {
   background: var(--background);
   background-image:
-    radial-gradient(ellipse 900px 500px at 15% -10%, color-mix(in oklab, var(--brand) 10%, transparent), transparent),
-    radial-gradient(ellipse 700px 400px at 100% 0%, color-mix(in oklab, var(--accent) 8%, transparent), transparent);
+    radial-gradient(ellipse 900px 500px at 15% -10%, color-mix(in oklab, var(--brand) 6%, transparent), transparent),
+    radial-gradient(ellipse 700px 400px at 100% 0%, color-mix(in oklab, var(--accent) 5%, transparent), transparent);
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: var(--foreground);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   letter-spacing: -0.005em;
+}
+
+/* Custom cursor (CustomCursor.tsx toggles this class on <html>, desktop only).
+ * Applied with a universal selector because links/buttons carry their own
+ * default `cursor: pointer` that mere inheritance from <html> wouldn't
+ * override — text-entry elements are excluded so forms stay usable. */
+.custom-cursor-active,
+.custom-cursor-active * {
+  cursor: none;
+}
+
+.custom-cursor-active input,
+.custom-cursor-active textarea,
+.custom-cursor-active select {
+  cursor: auto;
 }
 
 /* Layered, tinted shadows (using the brand hue) read as noticeably more
@@ -96,6 +111,26 @@ body {
 
 .animate-page-in {
   animation: fade-in-up 320ms var(--ease-premium) both;
+}
+
+/* Slow, wide drift for the ambient background blobs — two different paths
+ * so the blobs don't all move in lockstep. */
+@keyframes float-a {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(4%, 6%); }
+}
+
+@keyframes float-b {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-5%, 4%); }
+}
+
+.animate-float-a {
+  animation: float-a 22s ease-in-out infinite;
+}
+
+.animate-float-b {
+  animation: float-b 26s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
