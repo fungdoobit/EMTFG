@@ -40,7 +40,7 @@ export function ImprovementIdeasWidget({
           <p className="text-xs text-muted">
             {counts.proposed} Proposed · {counts.in_progress} In Progress · {counts.done} Done
           </p>
-          <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface">
+          <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface shadow-elevated">
             {sorted.map((hack) => (
               <li
                 key={hack.id}

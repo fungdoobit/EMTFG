@@ -46,7 +46,7 @@ export default async function ProcessPage({
           / {process.title}
         </p>
         <div className="mt-1 flex flex-wrap items-start justify-between gap-3">
-          <h1 className="text-2xl font-semibold text-foreground">{process.title}</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">{process.title}</h1>
           {unlocked && (
             <div className="flex gap-2">
               <Link href={`/${deptSlug}/${subSlug}/${processSlug}/edit`} className={btnSecondary}>

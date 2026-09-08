@@ -19,7 +19,7 @@ export default async function NewHackPage({
           </Link>{" "}
           / New
         </p>
-        <h1 className="mt-1 text-2xl font-semibold text-foreground">Suggest a hack</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">Suggest a hack</h1>
       </div>
 
       {unlocked ? (

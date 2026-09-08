@@ -31,7 +31,7 @@ export default async function HacksPage() {
     <div className="flex flex-col gap-8">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-foreground">Hacks &amp; Improvement Ideas</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Hacks &amp; Improvement Ideas</h1>
           <p className="mt-1 text-sm text-muted">
             Every hack suggested across every process, plus standalone ideas with no process yet.
           </p>

@@ -21,7 +21,7 @@ export default async function EditHackPage({ params }: PageProps<"/hacks/[hackId
           </Link>{" "}
           / Edit
         </p>
-        <h1 className="mt-1 text-2xl font-semibold text-foreground">Edit hack</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">Edit hack</h1>
       </div>
 
       {unlocked ? (

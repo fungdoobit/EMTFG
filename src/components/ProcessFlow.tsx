@@ -14,10 +14,12 @@ export function ProcessFlow({ steps }: { steps: ProcessStep[] }) {
           style={{ animationDelay: `${Math.min(i * 40, 400)}ms` }}
         >
           <div className="flex flex-col items-center">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-brand text-sm font-semibold text-brand-foreground">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand to-indigo-400 text-sm font-semibold text-brand-foreground shadow-elevated">
               {i + 1}
             </span>
-            {i < steps.length - 1 && <span className="w-px flex-1 bg-border" />}
+            {i < steps.length - 1 && (
+              <span className="w-px flex-1 bg-gradient-to-b from-border to-transparent" />
+            )}
           </div>
           <div className="pb-6">
             <p className="pt-1 font-medium text-foreground">{step.title}</p>

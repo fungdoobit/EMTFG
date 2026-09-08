@@ -6,16 +6,16 @@ export default async function GlossaryPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">Glossary</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Glossary</h1>
         <p className="mt-1 text-sm text-muted">
           Abbreviations used across departments — not tied to any one sub-department.
         </p>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-border bg-surface">
+      <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-elevated">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-border text-xs uppercase tracking-wide text-muted">
+            <tr className="border-b border-border bg-background text-xs uppercase tracking-wide text-muted">
               <th className="px-4 py-2.5">Abbr.</th>
               <th className="px-4 py-2.5">Full term</th>
               <th className="px-4 py-2.5">Meaning</th>

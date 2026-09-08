@@ -1,14 +1,16 @@
 import Link from "next/link";
 import { getDepartments } from "@/lib/queries";
+import { getDepartmentVisual } from "@/lib/departmentIcons";
+import { cardClass } from "@/lib/ui";
 
 export default async function HomePage() {
   const departments = await getDepartments();
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">Departments</h1>
-        <p className="mt-1 text-sm text-muted">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Departments</h1>
+        <p className="mt-1.5 text-base text-muted">
           Pick a department to browse its processes and tutorials.
         </p>
       </div>
@@ -17,22 +19,32 @@ export default async function HomePage() {
         <p className="text-sm text-muted">No departments yet.</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {departments.map((dept, i) => (
-            <Link
-              key={dept.id}
-              href={`/${dept.slug}`}
-              style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
-              className="group animate-page-in rounded-lg border border-border bg-surface p-5 shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:border-brand hover:shadow-md active:translate-y-0"
-            >
-              <h2 className="text-lg font-medium text-foreground">{dept.name}</h2>
-              <p className="mt-1 text-sm text-muted">
-                Browse sub-departments and processes{" "}
-                <span className="inline-block transition-transform duration-200 group-hover:translate-x-0.5">
+          {departments.map((dept, i) => {
+            const { icon, badgeClass } = getDepartmentVisual(dept.slug);
+            return (
+              <Link
+                key={dept.id}
+                href={`/${dept.slug}`}
+                style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
+                className={`group animate-page-in flex items-start gap-4 ${cardClass}`}
+              >
+                <span
+                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-xl ${badgeClass}`}
+                >
+                  {icon}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="truncate text-lg font-semibold tracking-tight text-foreground">
+                    {dept.name}
+                  </h2>
+                  <p className="mt-1 text-sm text-muted">Browse sub-departments and processes</p>
+                </div>
+                <span className="mt-2 shrink-0 text-muted transition-transform duration-200 group-hover:translate-x-1 group-hover:text-brand">
                   →
                 </span>
-              </p>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

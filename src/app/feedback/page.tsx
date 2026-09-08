@@ -18,7 +18,7 @@ export default async function FeedbackPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">Feedback</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Feedback</h1>
         <p className="mt-1 text-sm text-muted">
           Everything submitted through the &ldquo;Feedback&rdquo; box in the side menu.
         </p>
@@ -41,7 +41,7 @@ async function FeedbackList() {
   }
 
   return (
-    <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface">
+    <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface shadow-elevated">
       {feedback.map((item) => (
         <li key={item.id} className="flex flex-col gap-1 px-4 py-3">
           <p className="whitespace-pre-wrap text-sm text-foreground">{item.message}</p>

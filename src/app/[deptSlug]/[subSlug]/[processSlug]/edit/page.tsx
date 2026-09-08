@@ -23,7 +23,7 @@ export default async function EditProcessPage({
           </Link>{" "}
           / Edit
         </p>
-        <h1 className="mt-1 text-2xl font-semibold text-foreground">Edit {process.title}</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">Edit {process.title}</h1>
       </div>
 
       {unlocked ? (

@@ -21,7 +21,7 @@ export default async function NewSubDepartmentPage({ params }: PageProps<"/[dept
           </Link>{" "}
           / New sub-department
         </p>
-        <h1 className="mt-1 text-2xl font-semibold text-foreground">
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">
           Add a sub-department to {department.name}
         </h1>
       </div>

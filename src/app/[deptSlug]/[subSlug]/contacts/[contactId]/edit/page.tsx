@@ -26,7 +26,7 @@ export default async function EditContactPage({
           </Link>{" "}
           / Edit Sifu Guide contact
         </p>
-        <h1 className="mt-1 text-2xl font-semibold text-foreground">Edit {contact.name}</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">Edit {contact.name}</h1>
       </div>
 
       {unlocked ? (

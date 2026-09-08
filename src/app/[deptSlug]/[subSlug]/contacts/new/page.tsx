@@ -23,7 +23,7 @@ export default async function NewContactPage({
           </Link>{" "}
           / New Sifu Guide contact
         </p>
-        <h1 className="mt-1 text-2xl font-semibold text-foreground">
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">
           Add a Sifu Guide contact to {subDepartment.name}
         </h1>
       </div>

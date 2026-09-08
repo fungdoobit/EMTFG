@@ -9,7 +9,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold text-foreground">Search</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-foreground">Search</h1>
         {query && (
           <p className="mt-1 text-sm text-muted">
             {results.length} {results.length === 1 ? "result" : "results"} for &ldquo;{query}&rdquo;
@@ -22,7 +22,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/search">)
       ) : results.length === 0 ? (
         <p className="text-sm text-muted">No processes matched that search.</p>
       ) : (
-        <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface">
+        <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface shadow-elevated">
           {results.map((result) => (
             <li key={result.process.id} className="px-4 py-3 transition-colors hover:bg-background">
               <Link

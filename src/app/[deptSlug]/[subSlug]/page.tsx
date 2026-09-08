@@ -31,7 +31,7 @@ export default async function SubDepartmentPage({
           </Link>{" "}
           / {subDepartment.name}
         </p>
-        <h1 className="mt-1 text-2xl font-semibold text-foreground">{subDepartment.name}</h1>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">{subDepartment.name}</h1>
       </div>
 
       {subDepartment.tools_systems.length > 0 && (
@@ -68,7 +68,7 @@ export default async function SubDepartmentPage({
         {subDepartment.contacts.length === 0 ? (
           <p className="text-sm text-muted">No contacts listed yet.</p>
         ) : (
-          <div className="overflow-x-auto rounded-lg border border-border bg-surface">
+          <div className="overflow-x-auto rounded-xl border border-border bg-surface shadow-elevated">
             <table className="w-full text-left text-sm">
               <tbody>
                 {subDepartment.contacts.map((contact) => (
@@ -125,7 +125,7 @@ export default async function SubDepartmentPage({
         {processes.length === 0 ? (
           <p className="text-sm text-muted">No processes documented yet.</p>
         ) : (
-          <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface">
+          <ul className="flex flex-col divide-y divide-border rounded-xl border border-border bg-surface shadow-elevated">
             {processes.map((process) => (
               <li key={process.id}>
                 <Link

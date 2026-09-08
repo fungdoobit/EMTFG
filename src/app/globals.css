@@ -1,14 +1,18 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
+  --background: #f7f8fc;
   --surface: #ffffff;
-  --foreground: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --brand: #1d4ed8;
-  --brand-hover: #1e40af;
+  --foreground: #12142b;
+  --muted: #6b7086;
+  --border: #e5e7f0;
+  --brand: #4338ca;
+  --brand-hover: #362da3;
+  --brand-light: #eef0fd;
   --brand-foreground: #ffffff;
+  --accent: #d97706;
+  --accent-light: #fef3e2;
+  --shadow-color: 234deg 30% 20%;
 }
 
 @theme inline {
@@ -19,7 +23,10 @@
   --color-border: var(--border);
   --color-brand: var(--brand);
   --color-brand-hover: var(--brand-hover);
+  --color-brand-light: var(--brand-light);
   --color-brand-foreground: var(--brand-foreground);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
 }
 
 html {
@@ -28,8 +35,28 @@ html {
 
 body {
   background: var(--background);
+  background-image:
+    radial-gradient(ellipse 900px 500px at 15% -10%, color-mix(in oklab, var(--brand) 10%, transparent), transparent),
+    radial-gradient(ellipse 700px 400px at 100% 0%, color-mix(in oklab, var(--accent) 8%, transparent), transparent);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
   color: var(--foreground);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  letter-spacing: -0.005em;
+}
+
+/* Layered, tinted shadows (using the brand hue) read as noticeably more
+ * "designed" than Tailwind's default neutral-gray shadow utilities. */
+.shadow-elevated {
+  box-shadow:
+    0 1px 2px hsl(var(--shadow-color) / 0.06),
+    0 8px 24px -8px hsl(var(--shadow-color) / 0.16);
+}
+
+.shadow-elevated-lg {
+  box-shadow:
+    0 2px 4px hsl(var(--shadow-color) / 0.08),
+    0 16px 40px -12px hsl(var(--shadow-color) / 0.22);
 }
 
 /* A consistent, unhurried easing curve used across every hand-built

@@ -23,7 +23,7 @@ export default async function NewProcessPage({
           </Link>{" "}
           / New process
         </p>
-        <h1 className="mt-1 text-2xl font-semibold text-foreground">
+        <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">
           Add a process to {subDepartment.name}
         </h1>
       </div>
