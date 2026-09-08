@@ -98,6 +98,13 @@ export function SideNav({ departments }: { departments: Department[] }) {
 
         <div className="border-t border-border px-4 py-4">
           <FeedbackForm />
+          <Link
+            href="/feedback"
+            onClick={() => setOpen(false)}
+            className="mt-2 inline-block text-xs text-muted hover:text-brand"
+          >
+            View past feedback →
+          </Link>
           <p className="mt-4 text-center text-xs text-muted">Designed and developed by Isaac Tham</p>
         </div>
       </div>

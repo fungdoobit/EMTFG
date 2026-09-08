@@ -70,6 +70,13 @@ export type Hack = {
   created_at: string;
 };
 
+export type Feedback = {
+  id: string;
+  message: string;
+  page_path: string | null;
+  created_at: string;
+};
+
 export type GlossaryTerm = {
   id: string;
   abbreviation: string;

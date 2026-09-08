@@ -1,7 +1,9 @@
 import "server-only";
 import { createReadOnlyClient } from "@/lib/supabase/client";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   Department,
+  Feedback,
   GlossaryTerm,
   HackWithProcess,
   ProcessDetail,
@@ -15,7 +17,7 @@ import type {
 
 // Every function here is read-only (anon key) and safe to call from Server
 // Components. Nothing here checks the passcode — reading is open to anyone
-// with the link, per the spec.
+// with the link, per the spec. The one exception is getFeedbackList below.
 
 export async function getDepartments(): Promise<Department[]> {
   const supabase = createReadOnlyClient();
@@ -286,4 +288,19 @@ export async function searchProcesses(query: string): Promise<SearchResult[]> {
   }
 
   return [...results.values()].sort((a, b) => a.process.title.localeCompare(b.process.title));
+}
+
+/** Deliberately uses the admin (service role) client, not the anon one —
+ * feedback has RLS enabled with zero policies, so the anon key can't read
+ * it at all. Callers MUST check isUnlocked() before calling this; unlike
+ * every other function in this file, reading feedback is not open to
+ * anyone with the link. */
+export async function getFeedbackList(): Promise<Feedback[]> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("feedback")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data;
 }
