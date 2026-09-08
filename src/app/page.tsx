@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { getDepartments } from "@/lib/queries";
-import { getDepartmentVisual } from "@/lib/departmentIcons";
 import { cardClass } from "@/lib/ui";
 
 export default async function HomePage() {
@@ -19,32 +18,24 @@ export default async function HomePage() {
         <p className="text-sm text-muted">No departments yet.</p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {departments.map((dept, i) => {
-            const { icon, badgeClass } = getDepartmentVisual(dept.slug);
-            return (
-              <Link
-                key={dept.id}
-                href={`/${dept.slug}`}
-                style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
-                className={`group animate-page-in flex items-start gap-4 ${cardClass}`}
-              >
-                <span
-                  className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-lg text-xl ${badgeClass}`}
-                >
-                  {icon}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <h2 className="truncate text-lg font-semibold tracking-tight text-foreground">
-                    {dept.name}
-                  </h2>
-                  <p className="mt-1 text-sm text-muted">Browse sub-departments and processes</p>
-                </div>
-                <span className="mt-2 shrink-0 text-muted transition-transform duration-200 group-hover:translate-x-1 group-hover:text-brand">
-                  →
-                </span>
-              </Link>
-            );
-          })}
+          {departments.map((dept, i) => (
+            <Link
+              key={dept.id}
+              href={`/${dept.slug}`}
+              style={{ animationDelay: `${Math.min(i * 50, 300)}ms` }}
+              className={`group animate-page-in flex items-center justify-between gap-4 ${cardClass}`}
+            >
+              <div className="min-w-0 flex-1">
+                <h2 className="truncate text-lg font-semibold tracking-tight text-foreground">
+                  {dept.name}
+                </h2>
+                <p className="mt-1 text-sm text-muted">Browse sub-departments and processes</p>
+              </div>
+              <span className="shrink-0 text-muted transition-transform duration-200 group-hover:translate-x-1 group-hover:text-brand">
+                →
+              </span>
+            </Link>
+          ))}
         </div>
       )}
     </div>

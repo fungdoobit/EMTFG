@@ -10,15 +10,12 @@ export async function Header() {
   const [unlocked, departments] = await Promise.all([isUnlocked(), getDepartments()]);
 
   return (
-    <header className="sticky top-0 z-30 border-b border-border bg-surface/80 backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-border bg-surface">
       <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <SideNav departments={departments} />
-          <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-brand to-indigo-400 text-sm font-bold text-white shadow-elevated">
-              E
-            </span>
-            <span className="text-lg font-semibold tracking-tight text-foreground">EMT Hub</span>
+          <Link href="/" className="text-lg font-semibold tracking-tight text-foreground">
+            EMT Hub
           </Link>
         </div>
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
