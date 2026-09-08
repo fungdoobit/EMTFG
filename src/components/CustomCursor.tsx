@@ -6,7 +6,7 @@ const CHASE = 0.35;
 const ANGLE_CHASE = 0.3;
 const LENGTH = 26;
 const WIDTH = 20;
-const CORNER_RADIUS = 3;
+const CORNER_RADIUS = 5;
 
 type Point = { x: number; y: number };
 
