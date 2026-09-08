@@ -2,24 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const CHAIN_LENGTH = 7;
-const PIVOT_CHASE = 0.45;
-const LINK_CHASE = 0.4;
-const HEAD_SIZE = 7;
+const CHASE = 0.35;
+const ANGLE_CHASE = 0.3;
+const LENGTH = 15;
+const WIDTH = 9;
 
-/** A pointed head sits exactly at the pivot (the real pointer position) and
- * a short chain of links trails behind it, each one chasing the link ahead
- * with the same lerp factor — that cascade is what makes the tail flow and
- * wiggle on quick or curved moves instead of just dragging in a straight
- * line. The whole thing is drawn in white with mix-blend-mode: difference,
- * so it inverts whatever color it's over rather than sitting on top of it.
+/** The whole cursor is a single triangle — no separate pivot dot plus a
+ * line/rectangle tail. The triangle itself lags a step behind the real
+ * pointer position (that lag is the "tail follows" effect) and its
+ * rotation eases toward the direction of travel via shortest-path angle
+ * lerp, which is what makes it wiggle on quick turns instead of snapping.
+ * Filled white with mix-blend-mode: difference, so it inverts whatever
+ * color it's over instead of sitting flatly on top of it.
  *
  * Desktop only (pointer: fine) and skipped under prefers-reduced-motion.
  * Text inputs keep the normal cursor (see .custom-cursor-active in
  * globals.css) so the app's many forms stay usable. */
 export function CustomCursor() {
-  const pathRef = useRef<SVGPathElement>(null);
-  const headRef = useRef<SVGPolygonElement>(null);
+  const triangleRef = useRef<SVGPolygonElement>(null);
   const [enabled, setEnabled] = useState(false);
 
   useEffect(() => {
@@ -35,7 +35,9 @@ export function CustomCursor() {
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    const chain = Array.from({ length: CHAIN_LENGTH }, () => ({ x: mouseX, y: mouseY }));
+    let x = mouseX;
+    let y = mouseY;
+    let angle = 0;
 
     function onMove(e: MouseEvent) {
       mouseX = e.clientX;
@@ -45,29 +47,21 @@ export function CustomCursor() {
 
     let raf = 0;
     function tick() {
-      chain[0].x += (mouseX - chain[0].x) * PIVOT_CHASE;
-      chain[0].y += (mouseY - chain[0].y) * PIVOT_CHASE;
-      for (let i = 1; i < chain.length; i++) {
-        chain[i].x += (chain[i - 1].x - chain[i].x) * LINK_CHASE;
-        chain[i].y += (chain[i - 1].y - chain[i].y) * LINK_CHASE;
+      const prevX = x;
+      const prevY = y;
+      x += (mouseX - x) * CHASE;
+      y += (mouseY - y) * CHASE;
+
+      const dx = x - prevX;
+      const dy = y - prevY;
+      if (Math.hypot(dx, dy) > 0.2) {
+        const targetAngle = Math.atan2(dy, dx) * (180 / Math.PI);
+        let delta = targetAngle - angle;
+        delta = ((delta + 180) % 360 + 360) % 360 - 180;
+        angle += delta * ANGLE_CHASE;
       }
 
-      let d = `M ${chain[0].x} ${chain[0].y}`;
-      for (let i = 1; i < chain.length - 1; i++) {
-        const midX = (chain[i].x + chain[i + 1].x) / 2;
-        const midY = (chain[i].y + chain[i + 1].y) / 2;
-        d += ` Q ${chain[i].x} ${chain[i].y} ${midX} ${midY}`;
-      }
-      pathRef.current?.setAttribute("d", d);
-
-      const dx = chain[0].x - chain[1].x;
-      const dy = chain[0].y - chain[1].y;
-      const angle = Math.hypot(dx, dy) > 0.1 ? Math.atan2(dy, dx) * (180 / Math.PI) : 0;
-      headRef.current?.setAttribute(
-        "transform",
-        `translate(${chain[0].x} ${chain[0].y}) rotate(${angle})`
-      );
-
+      triangleRef.current?.setAttribute("transform", `translate(${x} ${y}) rotate(${angle})`);
       raf = requestAnimationFrame(tick);
     }
     raf = requestAnimationFrame(tick);
@@ -86,8 +80,11 @@ export function CustomCursor() {
       aria-hidden="true"
       className="pointer-events-none fixed inset-0 z-[100] h-full w-full mix-blend-difference"
     >
-      <path ref={pathRef} fill="none" stroke="white" strokeWidth={2.5} strokeLinecap="round" strokeLinejoin="round" />
-      <polygon ref={headRef} points={`${HEAD_SIZE},0 ${-HEAD_SIZE * 0.6},${HEAD_SIZE * 0.7} ${-HEAD_SIZE * 0.6},${-HEAD_SIZE * 0.7}`} fill="white" />
+      <polygon
+        ref={triangleRef}
+        points={`${LENGTH * 0.65},0 ${-LENGTH * 0.35},${WIDTH / 2} ${-LENGTH * 0.35},${-WIDTH / 2}`}
+        fill="white"
+      />
     </svg>
   );
 }
