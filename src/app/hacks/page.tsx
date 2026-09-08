@@ -3,6 +3,7 @@ import { getAllHacks } from "@/lib/queries";
 import { isUnlocked } from "@/lib/auth";
 import { deleteHack } from "@/lib/actions";
 import { HackCard } from "@/components/HackCard";
+import { HackStatusControl } from "@/components/HackStatus";
 import { DeleteButton } from "@/components/DeleteButton";
 import type { HackWithProcess } from "@/lib/types";
 
@@ -63,6 +64,9 @@ export default async function HacksPage() {
                     : undefined
                 }
                 actions={unlocked ? <HackActions hack={hack} /> : undefined}
+                statusControl={
+                  unlocked ? <HackStatusControl hackId={hack.id} status={hack.status} /> : undefined
+                }
               />
             ))}
           </div>
@@ -82,6 +86,9 @@ export default async function HacksPage() {
                 key={hack.id}
                 hack={hack}
                 actions={unlocked ? <HackActions hack={hack} /> : undefined}
+                statusControl={
+                  unlocked ? <HackStatusControl hackId={hack.id} status={hack.status} /> : undefined
+                }
               />
             ))}
           </div>

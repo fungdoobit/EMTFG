@@ -1,13 +1,23 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getDepartmentBySlug, getSubDepartmentsForDepartment } from "@/lib/queries";
+import {
+  getDepartmentBySlug,
+  getHacksForDepartment,
+  getSubDepartmentsForDepartment,
+} from "@/lib/queries";
+import { isUnlocked } from "@/lib/auth";
+import { ImprovementIdeasWidget } from "@/components/ImprovementIdeasWidget";
 
 export default async function DepartmentPage({ params }: PageProps<"/[deptSlug]">) {
   const { deptSlug } = await params;
   const department = await getDepartmentBySlug(deptSlug);
   if (!department) notFound();
 
-  const subDepartments = await getSubDepartmentsForDepartment(department.id);
+  const [subDepartments, hacks, unlocked] = await Promise.all([
+    getSubDepartmentsForDepartment(department.id),
+    getHacksForDepartment(department.id),
+    isUnlocked(),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -71,6 +81,8 @@ export default async function DepartmentPage({ params }: PageProps<"/[deptSlug]"
           ))}
         </div>
       )}
+
+      <ImprovementIdeasWidget hacks={hacks} departmentSlug={deptSlug} unlocked={unlocked} />
     </div>
   );
 }

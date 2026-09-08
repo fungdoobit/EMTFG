@@ -57,11 +57,14 @@ export type ProcessAttachment = {
   uploaded_at: string;
 };
 
+export type HackStatus = "proposed" | "in_progress" | "done";
+
 export type Hack = {
   id: string;
   process_id: string | null;
   title: string;
   description: string;
+  status: HackStatus;
   created_by: string | null;
   created_at: string;
 };

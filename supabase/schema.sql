@@ -135,11 +135,26 @@ create table if not exists hacks (
   process_id uuid references processes(id) on delete set null,
   title text not null,
   description text not null,
+  -- tracks whether the idea has actually gone anywhere, so the Hacks page
+  -- and the department page's "Improvement Ideas" widget read as a tracker
+  -- rather than a permanent wishlist
+  status text not null default 'proposed',
   created_by text,
   created_at timestamptz not null default now()
 );
 
 create index if not exists hacks_process_id_idx on hacks(process_id);
+
+-- Safety net for databases that already ran an earlier version of this file.
+alter table hacks add column if not exists status text not null default 'proposed';
+
+do $$
+begin
+  if not exists (select 1 from pg_constraint where conname = 'hacks_status_check') then
+    alter table hacks add constraint hacks_status_check
+      check (status in ('proposed', 'in_progress', 'done'));
+  end if;
+end $$;
 
 -- ── Glossary (cross-department, not tied to a sub-department) ───────────
 create table if not exists glossary_terms (

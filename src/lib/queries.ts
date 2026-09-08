@@ -165,6 +165,28 @@ export async function getAllHacks(): Promise<HackWithProcess[]> {
   return data as unknown as HackWithProcess[];
 }
 
+/** Hacks linked to a process that belongs to this department — powers the
+ * "Improvement Ideas" tracker widget on the department page. Standalone
+ * hacks (process_id null) have no department to attach to, so they only
+ * ever show up on the main Hacks page. */
+export async function getHacksForDepartment(departmentId: string): Promise<HackWithProcess[]> {
+  const supabase = createReadOnlyClient();
+  const { data, error } = await supabase
+    .from("hacks")
+    .select(
+      `*,
+      process:processes!inner(
+        id, slug, title, department_id,
+        sub_department:sub_departments(slug, name),
+        department:departments(slug)
+      )`
+    )
+    .eq("process.department_id", departmentId)
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data as unknown as HackWithProcess[];
+}
+
 export async function getGlossaryTerms(): Promise<GlossaryTerm[]> {
   const supabase = createReadOnlyClient();
   const { data, error } = await supabase

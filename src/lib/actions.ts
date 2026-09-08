@@ -382,3 +382,30 @@ export async function deleteHack(formData: FormData): Promise<void> {
   revalidatePath("/hacks");
   redirect("/hacks");
 }
+
+const HACK_STATUSES = ["proposed", "in_progress", "done"] as const;
+
+/** Deliberately doesn't redirect — this backs an inline status dropdown that
+ * can appear on the Hacks page or a department page's tracker widget, and
+ * should just re-render wherever the user already is, not send them to
+ * /hacks. Also skips ActionState/useActionState: there's no form-shaped
+ * input to redisplay on error, just a dropdown that should stay put. */
+export async function updateHackStatus(formData: FormData): Promise<void> {
+  await requireUnlocked();
+
+  const id = String(formData.get("id") ?? "");
+  const status = String(formData.get("status") ?? "");
+  const departmentSlug = String(formData.get("department_slug") ?? "");
+
+  if (!id) throw new Error("Missing hack id.");
+  if (!HACK_STATUSES.includes(status as (typeof HACK_STATUSES)[number])) {
+    throw new Error("Invalid status.");
+  }
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("hacks").update({ status }).eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/hacks");
+  if (departmentSlug) revalidatePath(`/${departmentSlug}`);
+}
