@@ -79,7 +79,7 @@ export default async function SubDepartmentPage({
                     <td className="whitespace-nowrap px-3 py-2 font-medium text-foreground align-top">
                       {contact.name}
                     </td>
-                    <td className="px-3 py-2 text-muted align-top">{contact.handles}</td>
+                    <td className="whitespace-pre-wrap px-3 py-2 text-muted align-top">{contact.handles}</td>
                     {unlocked && (
                       <td className="whitespace-nowrap px-3 py-2 align-top">
                         <div className="flex items-center gap-3">
@@ -107,7 +107,7 @@ export default async function SubDepartmentPage({
       </section>
 
       {subDepartment.general_note && (
-        <p className="rounded-lg bg-background px-4 py-3 text-sm text-muted border border-border">
+        <p className="whitespace-pre-wrap rounded-lg bg-background px-4 py-3 text-sm text-muted border border-border">
           {subDepartment.general_note}
         </p>
       )}

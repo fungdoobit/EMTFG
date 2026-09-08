@@ -24,7 +24,7 @@ export function HackCard({
         </div>
         {actions}
       </div>
-      <p className="mt-1.5 text-sm text-muted">{hack.description}</p>
+      <p className="mt-1.5 whitespace-pre-wrap text-sm text-muted">{hack.description}</p>
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
         {hack.created_by && <span>Suggested by {hack.created_by}</span>}
         {processLink ? (

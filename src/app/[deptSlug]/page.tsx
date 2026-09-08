@@ -34,7 +34,7 @@ export default async function DepartmentPage({ params }: PageProps<"/[deptSlug]"
         </h1>
         <p className="mt-2 text-sm text-muted">Pick a sub-department to see its processes.</p>
         {department.notes && (
-          <p className="mt-3 rounded-lg border border-border bg-background px-4 py-3 text-sm text-muted">
+          <p className="mt-3 whitespace-pre-wrap rounded-lg border border-border bg-background px-4 py-3 text-sm text-muted">
             {department.notes}
           </p>
         )}

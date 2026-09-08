@@ -24,7 +24,7 @@ export function ProcessFlow({ steps }: { steps: ProcessStep[] }) {
           <div className="pb-6">
             <p className="pt-1 font-medium text-foreground">{step.title}</p>
             {step.description && (
-              <p className="mt-1 text-sm text-muted">{step.description}</p>
+              <p className="mt-1 whitespace-pre-wrap text-sm text-muted">{step.description}</p>
             )}
           </div>
         </li>
