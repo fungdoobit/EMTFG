@@ -42,7 +42,7 @@ table is shaped the way it is. Short version:
 | `departments` | Top level. Ships with Finance, Business Development, Customs Brokerage, Trucking and Haulage (Transportation), and Warehousing — the last four start empty. `notes` is an optional freeform blurb shown on the department page (used for the Finance credits note). |
 | `sub_departments` | Belongs to a department. Carries its tools/systems list and a freeform note. Addable from the UI (department page → "+ Add sub-department") — needed since a brand-new department has nothing under it yet. |
 | `sub_department_contacts` | The "Sifu Guide" — who to ask about what, per sub-department. Fully editable from the sub-department page (add/edit/delete), since contacts change over time. |
-| `processes` | Belongs to a sub-department. Keyed by `(sub_department_id, slug)`, not slug alone — T12W and PHE both have a "Payment Voucher" process with different steps, and this is how they don't collide. |
+| `processes` | Belongs to a sub-department. Keyed by `(sub_department_id, slug)`, not slug alone — T12W and PHE both have a "Payment Voucher" process with different steps, and this is how they don't collide. `approver` is an optional freeform "requires sign-off from" note — pure documentation, not a tracked approval workflow (sign-off here mostly happens on paper). |
 | `process_steps` | Ordered steps for a process. Rendered as a simple numbered flow on the process page. |
 | `process_attachments` | Optional files/screenshots per process, stored in Supabase Storage. |
 | `hacks` | Improvement ideas. `process_id` is a **nullable** foreign key — a hack can be linked to the process it improves, or stand alone. One table drives both "notes under a process" and the standalone Hacks page. |
@@ -79,10 +79,11 @@ Re-running `seed.sql` will duplicate everything (it always inserts). If you
 need to start over, run the `truncate` statement at the top of that file
 first.
 
-If your database already ran `schema.sql` + `seed.sql` before `departments.notes`
-and the extra departments existed (i.e. you set this project up before a
-later update to this repo), run `supabase/002_expansion.sql` once instead —
-it's idempotent and only adds what's missing.
+If your database already ran `schema.sql` + `seed.sql` before this repo grew
+past its first version, run any `supabase/00N_*.sql` delta files you haven't
+applied yet, in order (`002_expansion.sql`, `003_hack_status.sql`,
+`004_process_approver.sql`, ...). Each is idempotent and only adds what's
+missing — safe to run even if you're not sure whether you've run it before.
 
 ### 4. Get your API keys
 
@@ -153,7 +154,7 @@ anywhere; a fifth department is just another row in `departments`.
 supabase/
   schema.sql          # tables, indexes, RLS policies, storage bucket
   seed.sql            # real Finance content (T12W + PHE + glossary) + empty departments
-  002_expansion.sql   # incremental delta for databases seeded before notes/extra departments existed
+  00N_*.sql           # incremental deltas for databases seeded before a given feature existed
 src/
   app/
     page.tsx                                  # home: department list

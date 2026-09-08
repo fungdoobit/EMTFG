@@ -78,6 +78,10 @@ create table if not exists processes (
   title text not null,
   -- optional notes/tips section, separate from hacks
   notes text,
+  -- who (by name/role) needs to sign off on this — purely documentation,
+  -- not a tracked workflow state, since sign-off here mostly happens on
+  -- paper. Answers "who do I walk this to" without hunting through steps.
+  approver text,
   created_by text,
   created_at timestamptz not null default now(),
   updated_by text,
@@ -87,6 +91,9 @@ create table if not exists processes (
 
 create index if not exists processes_sub_department_id_idx on processes(sub_department_id);
 create index if not exists processes_department_id_idx on processes(department_id);
+
+-- Safety net for databases that already ran an earlier version of this file.
+alter table processes add column if not exists approver text;
 
 create or replace function set_updated_at()
 returns trigger as $$

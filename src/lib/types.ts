@@ -35,6 +35,7 @@ export type Process = {
   slug: string;
   title: string;
   notes: string | null;
+  approver: string | null;
   created_by: string | null;
   created_at: string;
   updated_by: string | null;

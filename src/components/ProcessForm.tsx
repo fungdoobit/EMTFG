@@ -26,6 +26,7 @@ type Props =
       processId: string;
       initialTitle: string;
       initialNotes: string;
+      initialApprover: string;
       initialSteps: ProcessStep[];
       initialAttachments: ProcessAttachment[];
     };
@@ -129,6 +130,22 @@ export function ProcessForm(props: Props) {
           defaultValue={props.mode === "edit" ? props.initialNotes : ""}
           className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand"
         />
+      </div>
+
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="approver" className="text-sm font-medium text-foreground">
+          Requires sign-off from <span className="font-normal text-muted">(optional)</span>
+        </label>
+        <input
+          id="approver"
+          name="approver"
+          placeholder="e.g. Dr. Khana, Ms. Ho, HQ"
+          defaultValue={props.mode === "edit" ? props.initialApprover : ""}
+          className="rounded-md border border-border bg-surface px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand sm:w-64"
+        />
+        <p className="text-xs text-muted">
+          Just documentation — who to physically walk this to, not a tracked approval status.
+        </p>
       </div>
 
       <div className="flex flex-col gap-2">

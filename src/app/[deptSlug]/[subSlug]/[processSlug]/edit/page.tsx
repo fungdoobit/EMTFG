@@ -35,6 +35,7 @@ export default async function EditProcessPage({
           processId={process.id}
           initialTitle={process.title}
           initialNotes={process.notes ?? ""}
+          initialApprover={process.approver ?? ""}
           initialSteps={process.steps}
           initialAttachments={process.attachments}
         />

@@ -69,6 +69,11 @@ export default async function ProcessPage({
             <> · Last edited by {process.updated_by} on {formatDate(process.updated_at)}</>
           )}
         </p>
+        {process.approver && (
+          <p className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-sm text-amber-800">
+            ✍️ Requires sign-off from <span className="font-medium">{process.approver}</span>
+          </p>
+        )}
       </div>
 
       <section>

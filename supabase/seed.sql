@@ -53,8 +53,8 @@ begin
     (t12w_id, 'Shihan', 'AMBALATHA (outsourced transport), bank reconciliation, Hapag-Lloyd local charges, DGC, VBS invoices', 5);
 
   -- 1. Penang Port Daily Invoices
-  insert into processes (sub_department_id, department_id, slug, title, created_by)
-  values (t12w_id, dept_id, 'penang-port-daily-invoices', 'Penang Port Daily Invoices', 'Seed import')
+  insert into processes (sub_department_id, department_id, slug, title, approver, created_by)
+  values (t12w_id, dept_id, 'penang-port-daily-invoices', 'Penang Port Daily Invoices', 'Dr. Khana', 'Seed import')
   returning id into pid;
   insert into process_steps (process_id, step_order, title)
   select pid, ord, s from unnest(array[
@@ -143,8 +143,8 @@ begin
     (pid, 'Automate with an ERP (e.g. Acumatica)', 'This is a high-volume process affecting vendor relationships, cash flow, and audit compliance. An ERP system could automatically fetch and match data from invoices, DOs, PRs, and POs once received, then auto-update the tracking Excel — cutting manual document checking and data entry.', 'Seed import');
 
   -- 7. Non-trade AR Billing
-  insert into processes (sub_department_id, department_id, slug, title, created_by)
-  values (t12w_id, dept_id, 'non-trade-ar-billing', 'Non-trade AR Billing', 'Seed import')
+  insert into processes (sub_department_id, department_id, slug, title, approver, created_by)
+  values (t12w_id, dept_id, 'non-trade-ar-billing', 'Non-trade AR Billing', 'Ms. Ho (verification)', 'Seed import')
   returning id into pid;
   insert into process_steps (process_id, step_order, title)
   select pid, ord, s from unnest(array[
@@ -167,8 +167,8 @@ begin
   ]) with ordinality as t(s, ord);
 
   -- 9. Credit Note Requisition
-  insert into processes (sub_department_id, department_id, slug, title, created_by)
-  values (t12w_id, dept_id, 'credit-note-requisition', 'Credit Note Requisition', 'Seed import')
+  insert into processes (sub_department_id, department_id, slug, title, approver, created_by)
+  values (t12w_id, dept_id, 'credit-note-requisition', 'Credit Note Requisition', 'HQ (approval)', 'Seed import')
   returning id into pid;
   insert into process_steps (process_id, step_order, title)
   select pid, ord, s from unnest(array[
@@ -212,8 +212,8 @@ begin
   ]) with ordinality as t(s, ord);
 
   -- 13. Job Entry Listing Closing
-  insert into processes (sub_department_id, department_id, slug, title, created_by)
-  values (t12w_id, dept_id, 'job-entry-listing-closing', 'Job Entry Listing Closing', 'Seed import')
+  insert into processes (sub_department_id, department_id, slug, title, approver, created_by)
+  values (t12w_id, dept_id, 'job-entry-listing-closing', 'Job Entry Listing Closing', 'Ms. Ho (verification)', 'Seed import')
   returning id into pid;
   insert into process_steps (process_id, step_order, title)
   select pid, ord, s from unnest(array[
@@ -264,8 +264,8 @@ begin
     (pid, 'Sequential stamping', 'Stamp invoices the exact moment after printing, before recording in Excel (Print → Check → Stamp → Excel Entry). Prevents accidentally skipping or double-recording an invoice.', 'Seed import');
 
   -- 17. Payment Voucher
-  insert into processes (sub_department_id, department_id, slug, title, created_by)
-  values (t12w_id, dept_id, 'payment-voucher', 'Payment Voucher', 'Seed import')
+  insert into processes (sub_department_id, department_id, slug, title, approver, created_by)
+  values (t12w_id, dept_id, 'payment-voucher', 'Payment Voucher', 'Dr. Khana', 'Seed import')
   returning id into pid;
   insert into process_steps (process_id, step_order, title)
   select pid, ord, s from unnest(array[
@@ -400,8 +400,8 @@ begin
   ]) with ordinality as t(s, ord);
 
   -- 3. AP Invoices Entry
-  insert into processes (sub_department_id, department_id, slug, title, created_by)
-  values (phe_id, dept_id, 'ap-invoices-entry', 'AP Invoices Entry', 'Seed import')
+  insert into processes (sub_department_id, department_id, slug, title, approver, created_by)
+  values (phe_id, dept_id, 'ap-invoices-entry', 'AP Invoices Entry', 'PIC (signs invoice)', 'Seed import')
   returning id into pid;
   insert into process_steps (process_id, step_order, title)
   select pid, ord, s from unnest(array[
@@ -444,8 +444,8 @@ begin
   ]) with ordinality as t(s, ord);
 
   -- 7. Petty Cash
-  insert into processes (sub_department_id, department_id, slug, title, created_by)
-  values (phe_id, dept_id, 'petty-cash', 'Petty Cash', 'Seed import')
+  insert into processes (sub_department_id, department_id, slug, title, approver, created_by)
+  values (phe_id, dept_id, 'petty-cash', 'Petty Cash', 'HR (for toll claims)', 'Seed import')
   returning id into pid;
   insert into process_steps (process_id, step_order, title)
   select pid, ord, s from unnest(array[
@@ -455,8 +455,8 @@ begin
   ]) with ordinality as t(s, ord);
 
   -- 8. Payment Voucher (full process)
-  insert into processes (sub_department_id, department_id, slug, title, created_by)
-  values (phe_id, dept_id, 'payment-voucher-full-process', 'Payment Voucher (full process)', 'Seed import')
+  insert into processes (sub_department_id, department_id, slug, title, approver, created_by)
+  values (phe_id, dept_id, 'payment-voucher-full-process', 'Payment Voucher (full process)', 'Elaine (signature); DAL & DSMT (listing approval)', 'Seed import')
   returning id into pid;
   insert into process_steps (process_id, step_order, title)
   select pid, ord, s from unnest(array[

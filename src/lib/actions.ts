@@ -85,6 +85,7 @@ export async function createProcess(_prevState: ActionState, formData: FormData)
   const departmentSlug = String(formData.get("department_slug") ?? "");
   const subDepartmentSlug = String(formData.get("sub_department_slug") ?? "");
   const notes = String(formData.get("notes") ?? "").trim();
+  const approver = String(formData.get("approver") ?? "").trim();
   const authorName = String(formData.get("author_name") ?? "").trim();
   const steps = readSteps(formData);
 
@@ -111,6 +112,7 @@ export async function createProcess(_prevState: ActionState, formData: FormData)
       slug,
       title,
       notes: notes || null,
+      approver: approver || null,
       created_by: authorName,
       updated_by: authorName,
     })
@@ -142,6 +144,7 @@ export async function updateProcess(_prevState: ActionState, formData: FormData)
   const id = String(formData.get("id") ?? "");
   const title = String(formData.get("title") ?? "").trim();
   const notes = String(formData.get("notes") ?? "").trim();
+  const approver = String(formData.get("approver") ?? "").trim();
   const authorName = String(formData.get("author_name") ?? "").trim();
   const departmentSlug = String(formData.get("department_slug") ?? "");
   const subDepartmentSlug = String(formData.get("sub_department_slug") ?? "");
@@ -157,7 +160,7 @@ export async function updateProcess(_prevState: ActionState, formData: FormData)
 
   const { error: processError } = await supabase
     .from("processes")
-    .update({ title, notes: notes || null, updated_by: authorName })
+    .update({ title, notes: notes || null, approver: approver || null, updated_by: authorName })
     .eq("id", id);
   if (processError) return { error: `Could not save process: ${processError.message}` };
 
