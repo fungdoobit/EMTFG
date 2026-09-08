@@ -13,10 +13,10 @@ export function UnlockControl({ initiallyUnlocked }: { initiallyUnlocked: boolea
       <form action={lock}>
         <button
           type="submit"
-          className="rounded-md border border-border px-3 py-1.5 text-sm text-muted transition-all hover:border-foreground/30 hover:text-foreground active:scale-95"
+          className="whitespace-nowrap rounded-md border border-border px-3 py-1.5 text-sm text-muted transition-all hover:border-foreground/30 hover:text-foreground active:scale-95"
           title="Lock editing again"
         >
-          🔓 Unlocked — lock
+          Unlocked — lock
         </button>
       </form>
     );
@@ -27,9 +27,9 @@ export function UnlockControl({ initiallyUnlocked }: { initiallyUnlocked: boolea
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-md border border-border px-3 py-1.5 text-sm text-muted transition-all hover:border-foreground/30 hover:text-foreground active:scale-95"
+        className="whitespace-nowrap rounded-md border border-border px-3 py-1.5 text-sm text-muted transition-all hover:border-foreground/30 hover:text-foreground active:scale-95"
       >
-        🔒 Enter passcode to edit
+        Enter passcode to edit
       </button>
     );
   }

@@ -2,12 +2,13 @@
 
 import { useEffect, useRef, useState } from "react";
 
-/** A small dot that tracks the mouse exactly, plus a larger ring that trails
- * behind it with a bit of spring lag — the "cursor style" agency sites use.
- * Desktop only (pointer: fine) and off entirely under prefers-reduced-motion;
- * a phone or trackpad-less touch device never sees this. Text inputs keep
- * the normal cursor (see the .custom-cursor-active rules in globals.css) so
- * the app's many forms stay usable. */
+/** A precise dot at the exact pointer position, trailed by a soft circle
+ * driven by real spring physics (velocity + stiffness + damping, not a flat
+ * lerp) — it overshoots slightly and settles, and stretches into an ellipse
+ * along the direction of motion when moving fast, snapping back to a circle
+ * at rest. Desktop only (pointer: fine) and fully skipped under
+ * prefers-reduced-motion. Text inputs keep the normal cursor (see
+ * .custom-cursor-active in globals.css) so the app's forms stay usable. */
 export function CustomCursor() {
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
@@ -27,26 +28,40 @@ export function CustomCursor() {
 
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
-    let ringX = mouseX;
-    let ringY = mouseY;
+    let posX = mouseX;
+    let posY = mouseY;
+    let velX = 0;
+    let velY = 0;
 
-    function place(el: HTMLDivElement | null, x: number, y: number) {
-      if (el) el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -50%)`;
-    }
+    const STIFFNESS = 0.14;
+    const DAMPING = 0.72;
 
     function onMove(e: MouseEvent) {
       mouseX = e.clientX;
       mouseY = e.clientY;
-      place(dotRef.current, mouseX, mouseY);
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+      }
       const target = e.target as HTMLElement | null;
       setHovering(!!target?.closest("a, button, select, [role='button']"));
     }
 
     let raf = 0;
     function tick() {
-      ringX += (mouseX - ringX) * 0.2;
-      ringY += (mouseY - ringY) * 0.2;
-      place(ringRef.current, ringX, ringY);
+      const ax = (mouseX - posX) * STIFFNESS;
+      const ay = (mouseY - posY) * STIFFNESS;
+      velX = (velX + ax) * DAMPING;
+      velY = (velY + ay) * DAMPING;
+      posX += velX;
+      posY += velY;
+
+      const speed = Math.min(Math.hypot(velX, velY), 40);
+      const stretch = 1 + speed * 0.02;
+      const angle = speed > 0.5 ? Math.atan2(velY, velX) * (180 / Math.PI) : 0;
+
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%) rotate(${angle}deg) scaleX(${stretch})`;
+      }
       raf = requestAnimationFrame(tick);
     }
     raf = requestAnimationFrame(tick);
@@ -69,8 +84,10 @@ export function CustomCursor() {
       />
       <div
         ref={ringRef}
-        className={`pointer-events-none fixed left-0 top-0 z-[100] rounded-full border transition-[width,height,background-color,border-color] duration-200 ${
-          hovering ? "h-11 w-11 border-brand bg-brand/10" : "h-7 w-7 border-brand/40 bg-transparent"
+        className={`pointer-events-none fixed left-0 top-0 z-[100] rounded-full border transition-[width,height,background-color,border-color] duration-300 ${
+          hovering
+            ? "h-12 w-12 border-brand/60 bg-brand/10"
+            : "h-8 w-8 border-brand/30 bg-brand/[0.04]"
         }`}
       />
     </>
