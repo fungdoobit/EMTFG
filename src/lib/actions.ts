@@ -206,6 +206,119 @@ export async function deleteProcess(formData: FormData): Promise<void> {
   redirect(`/${departmentSlug}/${subDepartmentSlug}`);
 }
 
+// ── Sub-departments ──────────────────────────────────────────────────
+
+export async function createSubDepartment(
+  _prevState: ActionState,
+  formData: FormData
+): Promise<ActionState> {
+  await requireUnlocked();
+
+  const departmentSlug = String(formData.get("department_slug") ?? "");
+  const departmentId = String(formData.get("department_id") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const toolsSystems = String(formData.get("tools_systems") ?? "")
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+  const generalNote = String(formData.get("general_note") ?? "").trim();
+
+  if (!name) return { error: "Name is required." };
+
+  const supabase = createAdminClient();
+  const slug = slugify(name);
+
+  const { error } = await supabase.from("sub_departments").insert({
+    department_id: departmentId,
+    slug,
+    name,
+    tools_systems: toolsSystems,
+    general_note: generalNote || null,
+  });
+
+  if (error) {
+    if (error.code === "23505") {
+      return { error: "A sub-department with a matching name already exists here." };
+    }
+    return { error: `Could not save sub-department: ${error.message}` };
+  }
+
+  revalidatePath(`/${departmentSlug}`);
+  redirect(`/${departmentSlug}/${slug}`);
+}
+
+// ── Sifu Guide contacts ──────────────────────────────────────────────
+
+export async function createContact(_prevState: ActionState, formData: FormData): Promise<ActionState> {
+  await requireUnlocked();
+
+  const subDepartmentId = String(formData.get("sub_department_id") ?? "");
+  const departmentSlug = String(formData.get("department_slug") ?? "");
+  const subDepartmentSlug = String(formData.get("sub_department_slug") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const handles = String(formData.get("handles") ?? "").trim();
+
+  if (!name) return { error: "Name is required." };
+  if (!handles) return { error: "Say what they handle." };
+
+  const supabase = createAdminClient();
+  const { count } = await supabase
+    .from("sub_department_contacts")
+    .select("id", { count: "exact", head: true })
+    .eq("sub_department_id", subDepartmentId);
+
+  const { error } = await supabase.from("sub_department_contacts").insert({
+    sub_department_id: subDepartmentId,
+    name,
+    handles,
+    sort_order: (count ?? 0) + 1,
+  });
+  if (error) return { error: `Could not save contact: ${error.message}` };
+
+  revalidatePath(`/${departmentSlug}/${subDepartmentSlug}`);
+  redirect(`/${departmentSlug}/${subDepartmentSlug}`);
+}
+
+export async function updateContact(_prevState: ActionState, formData: FormData): Promise<ActionState> {
+  await requireUnlocked();
+
+  const id = String(formData.get("id") ?? "");
+  const departmentSlug = String(formData.get("department_slug") ?? "");
+  const subDepartmentSlug = String(formData.get("sub_department_slug") ?? "");
+  const name = String(formData.get("name") ?? "").trim();
+  const handles = String(formData.get("handles") ?? "").trim();
+
+  if (!id) return { error: "Missing contact id." };
+  if (!name) return { error: "Name is required." };
+  if (!handles) return { error: "Say what they handle." };
+
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("sub_department_contacts")
+    .update({ name, handles })
+    .eq("id", id);
+  if (error) return { error: `Could not save contact: ${error.message}` };
+
+  revalidatePath(`/${departmentSlug}/${subDepartmentSlug}`);
+  redirect(`/${departmentSlug}/${subDepartmentSlug}`);
+}
+
+export async function deleteContact(formData: FormData): Promise<void> {
+  await requireUnlocked();
+
+  const id = String(formData.get("id") ?? "");
+  const departmentSlug = String(formData.get("department_slug") ?? "");
+  const subDepartmentSlug = String(formData.get("sub_department_slug") ?? "");
+  if (!id) throw new Error("Missing contact id.");
+
+  const supabase = createAdminClient();
+  const { error } = await supabase.from("sub_department_contacts").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath(`/${departmentSlug}/${subDepartmentSlug}`);
+  redirect(`/${departmentSlug}/${subDepartmentSlug}`);
+}
+
 // ── Hacks ─────────────────────────────────────────────────────────────
 
 export async function createHack(_prevState: ActionState, formData: FormData): Promise<ActionState> {

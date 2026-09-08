@@ -23,8 +23,18 @@ declare
 begin
 
   -- ── Department ───────────────────────────────────────────────────────
-  insert into departments (slug, name) values ('finance', 'Finance')
+  insert into departments (slug, name, notes) values (
+    'finance', 'Finance',
+    'Much of this content is adapted from the Finance Playbook originally compiled by Jia Qian and Vincent — credit to them for the groundwork this section is built on.'
+  )
   returning id into dept_id;
+
+  -- ── Other departments (empty for now — add sub-departments to get started) ──
+  insert into departments (slug, name) values
+    ('business-development', 'Business Development'),
+    ('customs-brokerage', 'Customs Brokerage'),
+    ('trucking-and-haulage-transportation', 'Trucking and Haulage (Transportation)'),
+    ('warehousing', 'Warehousing');
 
   -- ── Sub-department: T12W ────────────────────────────────────────────
   insert into sub_departments (department_id, slug, name, tools_systems, general_note)

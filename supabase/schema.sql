@@ -29,8 +29,15 @@ create table if not exists departments (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique,
   name text not null,
+  -- optional freeform note shown on the department page — e.g. crediting
+  -- whoever originally compiled the source material for that department
+  notes text,
   created_at timestamptz not null default now()
 );
+
+-- Safety net for databases that already ran an earlier version of this
+-- file before `notes` existed — harmless no-op on a fresh database.
+alter table departments add column if not exists notes text;
 
 -- ── Sub-departments ──────────────────────────────────────────────────────
 create table if not exists sub_departments (

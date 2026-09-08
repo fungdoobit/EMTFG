@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getProcessesForSubDepartment, getSubDepartmentBySlug } from "@/lib/queries";
+import { isUnlocked } from "@/lib/auth";
+import { deleteContact } from "@/lib/actions";
+import { DeleteButton } from "@/components/DeleteButton";
 
 export default async function SubDepartmentPage({
   params,
@@ -9,7 +12,10 @@ export default async function SubDepartmentPage({
   const subDepartment = await getSubDepartmentBySlug(deptSlug, subSlug);
   if (!subDepartment) notFound();
 
-  const processes = await getProcessesForSubDepartment(subDepartment.id);
+  const [processes, unlocked] = await Promise.all([
+    getProcessesForSubDepartment(subDepartment.id),
+    isUnlocked(),
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -45,12 +51,23 @@ export default async function SubDepartmentPage({
         </section>
       )}
 
-      {subDepartment.contacts.length > 0 && (
-        <section>
+      <section className="flex flex-col gap-3">
+        <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
-            Who to ask
+            Sifu Guide
           </h2>
-          <div className="mt-2 overflow-x-auto rounded-lg border border-border bg-surface">
+          <Link
+            href={`/${deptSlug}/${subSlug}/contacts/new`}
+            className="text-sm font-medium text-brand hover:underline"
+          >
+            + Add contact
+          </Link>
+        </div>
+
+        {subDepartment.contacts.length === 0 ? (
+          <p className="text-sm text-muted">No contacts listed yet.</p>
+        ) : (
+          <div className="overflow-x-auto rounded-lg border border-border bg-surface">
             <table className="w-full text-left text-sm">
               <tbody>
                 {subDepartment.contacts.map((contact) => (
@@ -58,14 +75,32 @@ export default async function SubDepartmentPage({
                     <td className="whitespace-nowrap px-3 py-2 font-medium text-foreground align-top">
                       {contact.name}
                     </td>
-                    <td className="px-3 py-2 text-muted">{contact.handles}</td>
+                    <td className="px-3 py-2 text-muted align-top">{contact.handles}</td>
+                    {unlocked && (
+                      <td className="whitespace-nowrap px-3 py-2 align-top">
+                        <div className="flex items-center gap-3">
+                          <Link
+                            href={`/${deptSlug}/${subSlug}/contacts/${contact.id}/edit`}
+                            className="text-xs font-medium text-muted hover:text-foreground"
+                          >
+                            Edit
+                          </Link>
+                          <form action={deleteContact}>
+                            <input type="hidden" name="id" value={contact.id} />
+                            <input type="hidden" name="department_slug" value={deptSlug} />
+                            <input type="hidden" name="sub_department_slug" value={subSlug} />
+                            <DeleteButton confirmMessage={`Remove ${contact.name} from the Sifu Guide?`} />
+                          </form>
+                        </div>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </section>
-      )}
+        )}
+      </section>
 
       {subDepartment.general_note && (
         <p className="rounded-lg bg-background px-4 py-3 text-sm text-muted border border-border">

@@ -3,7 +3,7 @@ import { Header } from "@/components/Header";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Finance Process Hub",
+  title: "EMT Hub",
   description: "Department processes, tutorials, and improvement ideas.",
 };
 
@@ -14,7 +14,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <Header />
         <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>
         <footer className="border-t border-border py-6 text-center text-xs text-muted">
-          Finance Process Hub — internal knowledge base
+          EMT Hub — internal knowledge base
         </footer>
       </body>
     </html>

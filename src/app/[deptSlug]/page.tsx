@@ -20,6 +20,23 @@ export default async function DepartmentPage({ params }: PageProps<"/[deptSlug]"
         </p>
         <h1 className="mt-1 text-2xl font-semibold text-foreground">{department.name}</h1>
         <p className="mt-1 text-sm text-muted">Pick a sub-department to see its processes.</p>
+        {department.notes && (
+          <p className="mt-3 rounded-lg border border-border bg-background px-4 py-3 text-sm text-muted">
+            {department.notes}
+          </p>
+        )}
+      </div>
+
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
+          Sub-departments
+        </h2>
+        <Link
+          href={`/${deptSlug}/new`}
+          className="rounded-md bg-brand px-3 py-1.5 text-sm font-medium text-brand-foreground"
+        >
+          + Add sub-department
+        </Link>
       </div>
 
       {subDepartments.length === 0 ? (

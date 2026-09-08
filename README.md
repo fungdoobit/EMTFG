@@ -1,4 +1,4 @@
-# Finance Process Hub
+# EMT Hub
 
 A drill-down knowledge base for internal processes: **Department → Sub-department →
 Process → Flow/Tutorial**, plus a cross-cutting "Hacks & Improvement Ideas" board
@@ -39,9 +39,9 @@ table is shaped the way it is. Short version:
 
 | Table | Purpose |
 |---|---|
-| `departments` | Top level. Only "Finance" exists today; the schema doesn't assume that. |
-| `sub_departments` | Belongs to a department. Carries its tools/systems list and a freeform note. |
-| `sub_department_contacts` | The "who to ask about what" communication matrix, per sub-department. |
+| `departments` | Top level. Ships with Finance, Business Development, Customs Brokerage, Trucking and Haulage (Transportation), and Warehousing — the last four start empty. `notes` is an optional freeform blurb shown on the department page (used for the Finance credits note). |
+| `sub_departments` | Belongs to a department. Carries its tools/systems list and a freeform note. Addable from the UI (department page → "+ Add sub-department") — needed since a brand-new department has nothing under it yet. |
+| `sub_department_contacts` | The "Sifu Guide" — who to ask about what, per sub-department. Fully editable from the sub-department page (add/edit/delete), since contacts change over time. |
 | `processes` | Belongs to a sub-department. Keyed by `(sub_department_id, slug)`, not slug alone — T12W and PHE both have a "Payment Voucher" process with different steps, and this is how they don't collide. |
 | `process_steps` | Ordered steps for a process. Rendered as a simple numbered flow on the process page. |
 | `process_attachments` | Optional files/screenshots per process, stored in Supabase Storage. |
@@ -78,6 +78,11 @@ npm install
 Re-running `seed.sql` will duplicate everything (it always inserts). If you
 need to start over, run the `truncate` statement at the top of that file
 first.
+
+If your database already ran `schema.sql` + `seed.sql` before `departments.notes`
+and the extra departments existed (i.e. you set this project up before a
+later update to this repo), run `supabase/002_expansion.sql` once instead —
+it's idempotent and only adds what's missing.
 
 ### 4. Get your API keys
 
@@ -136,24 +141,30 @@ Vercel's servers.
 
 ## Adding another department later
 
-The schema and UI don't assume "Finance" is the only department — add a row
-to `departments`, then `sub_departments` underneath it, and it shows up on
-the home page automatically. There's no department-specific code anywhere.
+Business Development, Customs Brokerage, Trucking and Haulage (Transportation),
+and Warehousing already exist as empty departments — visit one, click
+"+ Add sub-department" to create its first sub-department, then "+ Add new
+process" inside that to start documenting. No department-specific code exists
+anywhere; a fifth department is just another row in `departments`.
 
 ## Project structure
 
 ```
 supabase/
   schema.sql          # tables, indexes, RLS policies, storage bucket
-  seed.sql            # real Finance content (T12W + PHE + glossary)
+  seed.sql            # real Finance content (T12W + PHE + glossary) + empty departments
+  002_expansion.sql   # incremental delta for databases seeded before notes/extra departments existed
 src/
   app/
     page.tsx                                  # home: department list
-    [deptSlug]/page.tsx                        # sub-department list
-    [deptSlug]/[subSlug]/page.tsx              # process list + comms matrix
+    [deptSlug]/page.tsx                        # sub-department list + department notes
+    [deptSlug]/new/page.tsx                    # add-sub-department form
+    [deptSlug]/[subSlug]/page.tsx              # process list + Sifu Guide
     [deptSlug]/[subSlug]/new/page.tsx          # add-process form
     [deptSlug]/[subSlug]/[processSlug]/page.tsx        # process detail
     [deptSlug]/[subSlug]/[processSlug]/edit/page.tsx   # edit-process form
+    [deptSlug]/[subSlug]/contacts/new/page.tsx         # add Sifu Guide contact
+    [deptSlug]/[subSlug]/contacts/[contactId]/edit/page.tsx  # edit contact
     hacks/                                     # standalone hacks board + forms
     glossary/page.tsx
     search/page.tsx

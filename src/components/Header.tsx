@@ -12,7 +12,7 @@ export async function Header() {
       <div className="mx-auto flex max-w-5xl flex-col gap-3 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center justify-between gap-4">
           <Link href="/" className="text-lg font-semibold text-foreground">
-            Finance Process Hub
+            EMT Hub
           </Link>
           <nav className="flex items-center gap-4 text-sm text-muted sm:hidden">
             <Link href="/hacks" className="hover:text-foreground">

@@ -6,6 +6,7 @@ export type Department = {
   id: string;
   slug: string;
   name: string;
+  notes: string | null;
   created_at: string;
 };
 
